@@ -1,3 +1,57 @@
-.idea/
+# Miscellaneous
+*.class
+*.lock
+*.log
+*.pyc
+*.swp
+.DS_Store
+.atom/
+.buildlog/
+.history
+.svn/
+*.env
 pubspec_overrides.yaml
 melos_mint_workspace.iml
+
+# IntelliJ related
+*.iml
+*.ipr
+*.iws
+.idea/*
+
+# Visual Studio Code related
+.classpath
+.project
+.settings/
+.vscode/*
+
+# Flutter/Dart/Pub related
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+.fvm/
+
+# packages file containing multi-root paths
+.packages.generated
+
+# Coverage
+coverage/
+
+# Web related
+lib/generated_plugin_registrant.dart
+
+# Symbolication related
+app.*.symbols
+
+# Obfuscation related
+app.*.map.json
