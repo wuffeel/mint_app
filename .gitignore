@@ -10,6 +10,7 @@
 .history
 .svn/
 *.env
+pubspec.lock
 pubspec_overrides.yaml
 melos_mint_workspace.iml
 
