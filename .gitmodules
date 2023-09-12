@@ -1,0 +1,6 @@
+[submodule "apps/mint"]
+	path = apps/mint
+	url = https://github.com/wuffeel/mint.git
+[submodule "apps/mint_web"]
+	path = apps/mint_web
+	url = https://github.com/wuffeel/mint_web.git

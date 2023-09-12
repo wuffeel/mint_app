@@ -1,0 +1,6 @@
+name: mint_test
+
+environment:
+  sdk: '>=2.18.0 <3.0.0'
+dependencies:
+  melos: ^3.1.1
