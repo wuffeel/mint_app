@@ -1,7 +1,8 @@
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
-import 'package:mint_core/mint_assembly.dart';
-import 'package:mint_core/mint_utils.dart';
+
+import '../../../mint_assembly.dart';
+import '../../../mint_utils.dart';
 
 @Injectable(as: Factory<types.Room?, Map<String, dynamic>>)
 class ChatRoomFromMap implements Factory<types.Room?, Map<String, dynamic>> {

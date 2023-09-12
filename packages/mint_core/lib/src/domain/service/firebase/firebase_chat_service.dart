@@ -5,7 +5,6 @@ import 'package:path/path.dart';
 import '../../../../mint_assembly.dart';
 import '../../../../mint_module.dart';
 import '../../../data/repository/abstract/chat_repository.dart';
-import '../abstract/chat_service.dart';
 import '../abstract/file_service.dart';
 
 @injectable
