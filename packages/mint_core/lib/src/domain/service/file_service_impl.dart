@@ -12,11 +12,11 @@ class FileServiceImpl implements FileService {
 
   @override
   Future<String> loadFile(
-      String fileName,
-      String fileUri, {
-        void Function()? onLoadingCallback,
-        void Function()? onLoadedCallback,
-      }) async {
+    String fileName,
+    String fileUri, {
+    void Function()? onLoadingCallback,
+    void Function()? onLoadedCallback,
+  }) async {
     return _fileRepository.loadFile(
       fileName,
       fileUri,

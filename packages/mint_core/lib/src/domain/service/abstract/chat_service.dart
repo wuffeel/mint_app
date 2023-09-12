@@ -10,10 +10,10 @@ abstract class ChatService {
   Future<void> deleteMessage(String roomId, types.Message message);
 
   Future<void> onPreviewDataFetched(
-      types.TextMessage message,
-      types.PreviewData previewData,
-      String roomId,
-      );
+    types.TextMessage message,
+    types.PreviewData previewData,
+    String roomId,
+  );
 
   Future<types.Room?> fetchRoom(String roomId);
 }

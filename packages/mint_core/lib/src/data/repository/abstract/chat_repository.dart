@@ -10,10 +10,10 @@ abstract class ChatRepository {
   Future<void> deleteMessage(String roomId, String messageId);
 
   Future<void> onPreviewDataFetched(
-      types.TextMessage message,
-      types.PreviewData previewData,
-      String roomId,
-      );
+    types.TextMessage message,
+    types.PreviewData previewData,
+    String roomId,
+  );
 
   Future<Map<String, dynamic>?> fetchRoom(String roomId);
 }
