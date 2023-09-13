@@ -1,11 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
-import '../abstract/firebase_initializer.dart';
-import '../abstract/user_repository.dart';
+import '../../../../mint_module.dart';
 
-@lazySingleton
 class FirebaseUserRepository implements UserRepository {
   FirebaseUserRepository(
     this._firebaseInitializer,
@@ -28,13 +27,15 @@ class FirebaseUserRepository implements UserRepository {
 
     if (user == null) return null;
 
-    final userCollection = firestore.collection(_userCollection);
+    final userCollection =
+        firestore.collection(FirebaseUserRepository._userCollection);
     final userDoc = await userCollection.doc(user.uid).get();
     final userData = userDoc.data();
 
     if (userData == null) {
-      return UserModelDto(id: user.uid, phoneNumber: user.phoneNumber);
+      return _createUser(user.uid, user.phoneNumber, userCollection);
     }
+
     return UserModelDto.fromJsonWithId(userData, user.uid);
   }
 
@@ -87,5 +88,57 @@ class FirebaseUserRepository implements UserRepository {
       'imageUrl': param.photoUrl,
       'updatedAt': DateTime.now().toUtc(),
     };
+  }
+
+  Future<UserModelDto> _createUser(
+    String uid,
+    String? phoneNumber,
+    CollectionReference userCollection,
+  ) {
+    throw UnimplementedError('[_createUser] has not been implemented');
+  }
+}
+
+@web
+@LazySingleton(as: FirebaseUserRepository)
+class FirebaseWebUserRepository extends FirebaseUserRepository {
+  FirebaseWebUserRepository(
+    super.firebaseInitializer,
+    super.modifiedUserDtoToMap,
+  );
+
+  @override
+  Future<UserModelDto> _createUser(
+    String uid,
+    String? phoneNumber,
+    CollectionReference userCollection,
+  ) async {
+    final userModelDto = UserModelDto(id: uid, phoneNumber: phoneNumber);
+    final userModelDtoMap = userModelDto.toJsonWithoutId();
+    await userCollection.doc(uid).set(userModelDtoMap);
+
+    return userModelDto;
+  }
+}
+
+@native
+@LazySingleton(as: FirebaseUserRepository)
+class FirebaseNativeUserRepository extends FirebaseUserRepository {
+  FirebaseNativeUserRepository(
+    super.firebaseInitializer,
+    super.modifiedUserDtoToMap,
+  );
+
+  @override
+  Future<PatientUserDto> _createUser(
+    String uid,
+    String? phoneNumber,
+    CollectionReference userCollection,
+  ) async {
+    final userModelDto = PatientUserDto(id: uid, phoneNumber: phoneNumber);
+    final userModelDtoMap = userModelDto.toJsonWithoutId();
+    await userCollection.doc(uid).set(userModelDtoMap);
+
+    return userModelDto;
   }
 }

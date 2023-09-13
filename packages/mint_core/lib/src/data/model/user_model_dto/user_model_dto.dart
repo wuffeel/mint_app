@@ -23,9 +23,10 @@ abstract class IUserModelDto {
   String? get photoUrl;
 }
 
-@Freezed(fromJson: true, toJson: true)
+@Freezed(fromJson: true, toJson: true, unionKey: 'type')
 class UserModelDto with _$UserModelDto {
   @Implements<IUserModelDto>()
+  @FreezedUnionValue('specialist')
   const factory UserModelDto({
     required String id,
     @DateTimeOrNullConverter() DateTime? dateOfBirth,
@@ -37,6 +38,7 @@ class UserModelDto with _$UserModelDto {
   }) = _UserModelDto;
 
   @Implements<IUserModelDto>()
+  @FreezedUnionValue('patient')
   const factory UserModelDto.patient({
     required String id,
     @DateTimeOrNullConverter() DateTime? dateOfBirth,
@@ -52,7 +54,7 @@ class UserModelDto with _$UserModelDto {
 
   factory UserModelDto.fromJson(Map<String, dynamic> json) {
     if (json['pinCode'] != null) return PatientUserDto.fromJson(json);
-    return _UserModelDto.fromJson(json);
+    return _$UserModelDtoFromJson(json);
   }
 
   factory UserModelDto.fromJsonWithId(Map<String, dynamic> json, String id) =>
