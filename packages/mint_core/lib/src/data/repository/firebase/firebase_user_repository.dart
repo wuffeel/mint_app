@@ -1,4 +1,5 @@
 import 'package:injectable/injectable.dart';
+
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
 import '../abstract/firebase_initializer.dart';
@@ -16,6 +17,7 @@ class FirebaseUserRepository implements UserRepository {
   final Factory<Map<String, dynamic>, UserModelDto> _modifiedUserDtoToMap;
 
   static const _userCollection = 'users';
+  static const _chatUserCollection = 'chat_users';
 
   @override
   Future<UserModelDto?> getCurrentUser() async {
@@ -64,8 +66,26 @@ class FirebaseUserRepository implements UserRepository {
   Future<void> updateUserData(UserModelDto userDataDto) async {
     final firestore = await _firebaseInitializer.firestore;
     final userCollection = firestore.collection(_userCollection);
+    final chatUserCollection = firestore.collection(_chatUserCollection);
 
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
-    return userCollection.doc(userDataDto.id).update(userDataMap);
+    final chatUserMap = _userModelDtoToChatUser(userDataDto);
+    await Future.wait([
+      chatUserCollection.doc(userDataDto.id).update(chatUserMap),
+      userCollection.doc(userDataDto.id).update(userDataMap),
+    ]);
+  }
+
+  /// Creates chat user map from [param] for fields update of database doc.
+  ///
+  /// Used as method because [Factory<Map<String, dynamic>, UserModelDto>] is
+  /// already defined
+  Map<String, dynamic> _userModelDtoToChatUser(UserModelDto param) {
+    return <String, dynamic>{
+      'firstName': param.firstName,
+      'lastName': param.lastName,
+      'imageUrl': param.photoUrl,
+      'updatedAt': DateTime.now().toUtc(),
+    };
   }
 }
