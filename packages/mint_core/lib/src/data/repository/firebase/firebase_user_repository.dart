@@ -17,6 +17,7 @@ class FirebaseUserRepository implements UserRepository {
 
   static const _userCollection = 'users';
   static const _chatUserCollection = 'chat_users';
+  static const _specialistCollection = 'specialists';
 
   @override
   Future<UserModelDto?> getCurrentUser() async {
@@ -68,13 +69,22 @@ class FirebaseUserRepository implements UserRepository {
     final firestore = await _firebaseInitializer.firestore;
     final userCollection = firestore.collection(_userCollection);
     final chatUserCollection = firestore.collection(_chatUserCollection);
+    final specialistCollection = firestore.collection(_specialistCollection);
 
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
     final chatUserMap = _userModelDtoToChatUser(userDataDto);
-    await Future.wait([
+    final futureList = [
       chatUserCollection.doc(userDataDto.id).update(chatUserMap),
       userCollection.doc(userDataDto.id).update(userDataMap),
-    ]);
+    ];
+    final storageUrl = userDataDto.photoUrl;
+    if (storageUrl != null) {
+      final updPhoto = specialistCollection
+          .doc(userDataDto.id)
+          .update({'photoUrl': storageUrl});
+      futureList.add(updPhoto);
+    }
+    await Future.wait(futureList);
   }
 
   /// Creates chat user map from [param] for fields update of database doc.

@@ -20,6 +20,7 @@ abstract class IUserModelDto {
 
   String? get phoneNumber;
 
+  /// If Firebase Storage is used, can be a path to storage bucket.
   String? get photoUrl;
 }
 

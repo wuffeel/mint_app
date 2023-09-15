@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:injectable/injectable.dart';
 
 import '../../../data/repository/abstract/storage_repository.dart';
@@ -15,13 +17,21 @@ class FirebaseStorageService implements StorageService {
   }
 
   @override
-  Future<String> uploadUserPhoto(String filePath, String userId) {
-    return _storageRepository.uploadUserPhoto(filePath, userId);
+  Future<({String photoUrl, String? storageUrl})> uploadUserPhoto(
+    Uint8List bytes,
+    String fileName,
+    String userId,
+  ) {
+    return _storageRepository.uploadUserPhoto(bytes, fileName, userId);
   }
 
   @override
-  Future<String> uploadChatFile(String filePath, String fileId, String roomId) {
-    return _storageRepository.uploadChatFile(filePath, fileId, roomId);
+  Future<String> uploadChatFile(
+    Uint8List bytes,
+    String fileName,
+    String roomId,
+  ) {
+    return _storageRepository.uploadChatFile(bytes, fileName, roomId);
   }
 
   @override
