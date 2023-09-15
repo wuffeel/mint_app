@@ -64,7 +64,7 @@ class FirebaseChatRepository implements ChatRepository {
 
   @override
   Future<Stream<List<types.Room>>> fetchRoomList(String userId) async {
-    return (await _firebaseInitializer.chat).rooms();
+    return (await _firebaseInitializer.chat).rooms(orderByUpdatedAt: true);
   }
 
   @override
