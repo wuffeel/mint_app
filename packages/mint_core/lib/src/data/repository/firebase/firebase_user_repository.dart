@@ -69,22 +69,13 @@ class FirebaseUserRepository implements UserRepository {
     final firestore = await _firebaseInitializer.firestore;
     final userCollection = firestore.collection(_userCollection);
     final chatUserCollection = firestore.collection(_chatUserCollection);
-    final specialistCollection = firestore.collection(_specialistCollection);
 
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
     final chatUserMap = _userModelDtoToChatUser(userDataDto);
-    final futureList = [
+    await Future.wait([
       chatUserCollection.doc(userDataDto.id).update(chatUserMap),
       userCollection.doc(userDataDto.id).update(userDataMap),
-    ];
-    final storageUrl = userDataDto.photoUrl;
-    if (storageUrl != null) {
-      final updPhoto = specialistCollection
-          .doc(userDataDto.id)
-          .update({'photoUrl': storageUrl});
-      futureList.add(updPhoto);
-    }
-    await Future.wait(futureList);
+    ]);
   }
 
   /// Creates chat user map from [param] for fields update of database doc.
@@ -116,6 +107,21 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
     super.firebaseInitializer,
     super.modifiedUserDtoToMap,
   );
+
+  @override
+  Future<void> updateUserData(UserModelDto userDataDto) async {
+    await super.updateUserData(userDataDto);
+
+    final firestore = await _firebaseInitializer.firestore;
+    final specialistCollection =
+        firestore.collection(FirebaseUserRepository._specialistCollection);
+
+    final storageUrl = userDataDto.photoUrl;
+    if (storageUrl == null) return;
+    return specialistCollection
+        .doc(userDataDto.id)
+        .update({'photoUrl': storageUrl});
+  }
 
   @override
   Future<UserModelDto> _createUser(

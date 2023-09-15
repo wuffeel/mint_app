@@ -48,22 +48,22 @@ class FirebaseUserService implements UserService {
     UserModel userData, {
     FileData? photoData,
   }) async {
-    if (photoData == null) return userData;
-    final fileData = await _storageService.uploadUserPhoto(
-      photoData.bytes,
-      photoData.name,
-      userData.id,
-    );
-
-    final photoUrl = fileData.photoUrl;
-    final storageUrl = fileData.storageUrl;
-
-    await _userRepository.updateUserData(
-      _userModelToDto
-          .create(userData)
-          .copyWith(photoUrl: storageUrl),
-    );
-
-    return userData.copyWith(photoUrl: photoUrl);
+    final fileData = photoData == null
+        ? null
+        : await _storageService.uploadUserPhoto(
+            photoData.bytes,
+            photoData.name,
+            userData.id,
+          );
+    if (fileData == null) {
+      await _userRepository.updateUserData(_userModelToDto.create(userData));
+      return userData;
+    } else {
+      final userDto = _userModelToDto.create(
+        userData.copyWith(photoUrl: fileData.storageUrl ?? fileData.photoUrl),
+      );
+      await _userRepository.updateUserData(userDto);
+      return userData.copyWith(photoUrl: fileData.photoUrl);
+    }
   }
 }
