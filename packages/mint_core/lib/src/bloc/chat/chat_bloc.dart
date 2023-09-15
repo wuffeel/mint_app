@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
@@ -116,10 +117,13 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     ChatInitializeRequested event,
     Emitter<ChatState> emit,
   ) async {
+    final user = _currentUser;
+    if (user == null) return;
     emit(ChatLoading());
     return emit.forEach(
       await _getMessagesUseCase(event.room),
-      onData: (messages) => ChatFetchMessagesSuccess(messages, event.room.id),
+      onData: (messages) =>
+          ChatFetchMessagesSuccess(messages, event.room, user.id),
       onError: (error, _) {
         final state = this.state;
         if (state is! ChatFetchMessagesSuccess) {
@@ -127,7 +131,11 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
           return ChatInitializeFailure();
         } else {
           log('ChatFetchMessagesFailure: $error');
-          return ChatFetchMessagesFailure(state.messages, event.room.id);
+          return ChatFetchMessagesFailure(
+            state.messages,
+            event.room,
+            state.senderId,
+          );
         }
       },
     );
@@ -143,7 +151,7 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     try {
       emit(ChatFetchRoomLoading());
       final room = await _createChatRoomUseCase(user.id, event.specialistId);
-      emit(ChatFetchRoomSuccess(room));
+      emit(ChatFetchRoomSuccess(room, user.id));
     } catch (error) {
       log('ChatFetchRoomFailure: $error');
       emit(ChatFetchRoomFailure());
@@ -166,12 +174,20 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
         createdAt: DateTime.now().millisecondsSinceEpoch,
       );
       emit(
-        ChatMessageLoading([loadingMessage, ...state.messages], state.roomId),
+        ChatMessageLoading(
+          [loadingMessage, ...state.messages],
+          state.room,
+          state.senderId,
+        ),
       );
-      await _sendMessageUseCase(event.message, state.roomId);
+      await _sendMessageUseCase(
+        event.message,
+        state.room.id,
+        bytes: event.bytes,
+      );
     } catch (error) {
       log('ChatSendMessageFailure: $error');
-      emit(ChatSendMessageFailure(state.messages, state.roomId));
+      emit(ChatSendMessageFailure(state.messages, state.room, state.senderId));
     }
   }
 
@@ -183,10 +199,12 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     if (state is! ChatFetchMessagesSuccess) return;
 
     try {
-      await _deleteMessageUseCase(state.roomId, event.message);
+      await _deleteMessageUseCase(state.room.id, event.message);
     } catch (error) {
       log('ChatDeleteMessageFailure: $error');
-      emit(ChatDeleteMessageFailure(state.messages, state.roomId));
+      emit(
+        ChatDeleteMessageFailure(state.messages, state.room, state.senderId),
+      );
     }
   }
 
@@ -201,7 +219,7 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
       await _previewDataFetchedUseCase(
         event.message,
         event.previewData,
-        state.roomId,
+        state.room.id,
       );
     } catch (error) {
       log('ChatPreviewDataApplyFailure: $error');
@@ -215,7 +233,9 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     try {
       final message = await _pickImageUseCase();
 
-      if (message != null) add(ChatSendMessageRequested(message));
+      if (message != null) {
+        add(ChatSendMessageRequested(message.message, bytes: message.bytes));
+      }
     } catch (error) {
       log('ChatImagePickFailure: $error');
     }
@@ -231,7 +251,9 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     try {
       final message = await _pickFileUseCase();
 
-      if (message != null) add(ChatSendMessageRequested(message));
+      if (message != null) {
+        add(ChatSendMessageRequested(message.message, bytes: message.bytes));
+      }
     } catch (error) {
       log('ChatFilePickFailure: $error');
     }
@@ -272,7 +294,13 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
                 ? element
                 : (element as types.FileMessage).copyWith(isLoading: true);
           }).toList();
-          emit(ChatFetchMessagesSuccess(loadingMessageList, state.roomId));
+          emit(
+            ChatFetchMessagesSuccess(
+              loadingMessageList,
+              state.room,
+              state.senderId,
+            ),
+          );
         },
         onLoadedCallback: () {
           final loadedMessageList = messageList.map((element) {
@@ -280,13 +308,19 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
                 ? element
                 : (element as types.FileMessage).copyWith(isLoading: false);
           }).toList();
-          emit(ChatFetchMessagesSuccess(loadedMessageList, state.roomId));
+          emit(
+            ChatFetchMessagesSuccess(
+              loadedMessageList,
+              state.room,
+              state.senderId,
+            ),
+          );
         },
       );
       if (event.shouldOpen) await _openFileUseCase(messageId);
     } catch (error) {
       log('ChatFileLoadFailure: $error');
-      emit(ChatFileLoadFailure(messageList, state.roomId));
+      emit(ChatFileLoadFailure(messageList, state.room, state.senderId));
     }
   }
 
@@ -298,10 +332,10 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     if (state is! ChatFetchMessagesSuccess) return;
     try {
       final message = await _saveAudioUseCase(event.audioMessage);
-      add(ChatSendMessageRequested(message));
+      add(ChatSendMessageRequested(message.message, bytes: message.bytes));
     } catch (error) {
       log('ChatSaveAudioFailure: $error');
-      emit(ChatSaveAudioFailure(state.messages, state.roomId));
+      emit(ChatSaveAudioFailure(state.messages, state.room, state.senderId));
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 abstract class ChatService {
@@ -5,7 +7,11 @@ abstract class ChatService {
 
   Future<Stream<List<types.Message>>> getMessages(types.Room room);
 
-  Future<void> sendMessage(dynamic partialMessage, String roomId);
+  Future<void> sendMessage(
+    dynamic partialMessage,
+    String roomId, {
+    Uint8List? bytes,
+  });
 
   Future<void> deleteMessage(String roomId, types.Message message);
 
@@ -16,4 +22,6 @@ abstract class ChatService {
   );
 
   Future<types.Room?> fetchRoom(String roomId);
+
+  Future<Stream<List<types.Room>>> fetchRoomList(String userId);
 }

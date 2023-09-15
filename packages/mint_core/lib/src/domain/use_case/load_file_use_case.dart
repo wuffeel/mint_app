@@ -8,7 +8,7 @@ class LoadFileUseCase {
 
   final FileService _service;
 
-  Future<String> call(
+  Future<String?> call(
     String fileName,
     String fileUri, {
     void Function()? onLoadingCallback,

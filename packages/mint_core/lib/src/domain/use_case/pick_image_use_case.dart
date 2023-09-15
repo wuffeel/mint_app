@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:injectable/injectable.dart';
 
@@ -9,5 +11,6 @@ class PickImageUseCase {
 
   final FileService _service;
 
-  Future<PartialImage?> call() => _service.pickImage();
+  Future<({PartialImage message, Uint8List bytes})?> call() =>
+      _service.pickImage();
 }

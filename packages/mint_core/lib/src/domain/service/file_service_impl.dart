@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
 
@@ -11,7 +13,7 @@ class FileServiceImpl implements FileService {
   final FileRepository _fileRepository;
 
   @override
-  Future<String> loadFile(
+  Future<String?> loadFile(
     String fileName,
     String fileUri, {
     void Function()? onLoadingCallback,
@@ -31,17 +33,19 @@ class FileServiceImpl implements FileService {
   }
 
   @override
-  Future<types.PartialImage?> pickImage() async {
+  Future<({types.PartialImage message, Uint8List bytes})?> pickImage() async {
     return _fileRepository.pickImage();
   }
 
   @override
-  Future<types.PartialFile?> pickFile() async {
+  Future<({types.PartialFile message, Uint8List bytes})?> pickFile() async {
     return _fileRepository.pickFile();
   }
 
   @override
-  Future<types.PartialAudio> saveAudio(types.PartialAudio audioMessage) async {
+  Future<({types.PartialAudio message, Uint8List bytes})> saveAudio(
+    types.PartialAudio audioMessage,
+  ) async {
     return _fileRepository.saveAudio(audioMessage);
   }
 

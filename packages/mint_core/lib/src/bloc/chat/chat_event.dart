@@ -16,9 +16,10 @@ class ChatInitializeRequested extends ChatEvent {
 }
 
 class ChatSendMessageRequested extends ChatEvent {
-  ChatSendMessageRequested(this.message);
+  ChatSendMessageRequested(this.message, {this.bytes});
 
   final dynamic message;
+  final Uint8List? bytes;
 }
 
 class ChatDeleteMessageRequested extends ChatEvent {
