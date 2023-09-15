@@ -16,14 +16,11 @@ final _privateConstructorUsedError = UnsupportedError(
 
 UserModelDto _$UserModelDtoFromJson(Map<String, dynamic> json) {
   switch (json['type']) {
-    case 'specialist':
-      return _UserModelDto.fromJson(json);
     case 'patient':
       return PatientUserDto.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(json, 'type', 'UserModelDto',
-          'Invalid union type "${json['type']}"!');
+      return _UserModelDto.fromJson(json);
   }
 }
 

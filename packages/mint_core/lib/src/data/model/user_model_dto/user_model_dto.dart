@@ -24,7 +24,12 @@ abstract class IUserModelDto {
   String? get photoUrl;
 }
 
-@Freezed(fromJson: true, toJson: true, unionKey: 'type')
+@Freezed(
+  fromJson: true,
+  toJson: true,
+  unionKey: 'type',
+  fallbackUnion: 'default',
+)
 class UserModelDto with _$UserModelDto {
   @Implements<IUserModelDto>()
   @FreezedUnionValue('specialist')
