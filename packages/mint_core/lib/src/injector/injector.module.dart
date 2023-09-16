@@ -52,6 +52,8 @@ import '../domain/use_case/create_chat_room_use_case.dart' as _i5;
 import '../domain/use_case/delete_message_use_case.dart' as _i6;
 import '../domain/use_case/fetch_chat_room_use_case.dart' as _i21;
 import '../domain/use_case/get_messages_use_case.dart' as _i32;
+import '../domain/use_case/get_user_presence_use_case.dart' as _i54;
+import '../domain/use_case/initialize_user_presence_use_case.dart' as _i55;
 import '../domain/use_case/load_file_use_case.dart' as _i33;
 import '../domain/use_case/message_mark_as_read_use_case.dart' as _i34;
 import '../domain/use_case/open_file_use_case.dart' as _i35;
@@ -60,7 +62,7 @@ import '../domain/use_case/pick_image_use_case.dart' as _i37;
 import '../domain/use_case/preview_data_fetched_use_case.dart' as _i39;
 import '../domain/use_case/save_audio_use_case.dart' as _i40;
 import '../domain/use_case/send_message_use_case.dart' as _i41;
-import '../module/mint_module.dart' as _i54;
+import '../module/mint_module.dart' as _i56;
 
 const String _web = 'web';
 const String _native = 'native';
@@ -108,12 +110,12 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
     gh.factory<_i26.FileServiceImpl>(
         () => _i26.FileServiceImpl(gh<_i22.FileRepository>()));
     gh.lazySingleton<_i27.FirebaseInitializer>(
-      () => _i28.FirebaseInitializerWeb(),
-      registerFor: {_web},
-    );
-    gh.lazySingleton<_i27.FirebaseInitializer>(
       () => _i28.FirebaseInitializerNative(),
       registerFor: {_native},
+    );
+    gh.lazySingleton<_i27.FirebaseInitializer>(
+      () => _i28.FirebaseInitializerWeb(),
+      registerFor: {_web},
     );
     gh.lazySingleton<_i29.FirebaseStorageRepository>(
         () => _i29.FirebaseStorageRepository(gh<_i27.FirebaseInitializer>()));
@@ -223,7 +225,11 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
           gh<_i7.Factory<_i2.Future<_i18.UserModel>, _i18.UserModelDto>>(),
           gh<_i7.Factory<_i18.UserModelDto, _i18.UserModel>>(),
         ));
+    gh.factory<_i54.GetUserPresenceUseCase>(
+        () => _i54.GetUserPresenceUseCase(gh<_i46.UserService>()));
+    gh.factory<_i55.InitializeUserPresenceUseCase>(
+        () => _i55.InitializeUserPresenceUseCase(gh<_i46.UserService>()));
   }
 }
 
-class _$MintModule extends _i54.MintModule {}
+class _$MintModule extends _i56.MintModule {}

@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
 
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
@@ -76,6 +78,51 @@ class FirebaseUserRepository implements UserRepository {
       chatUserCollection.doc(userDataDto.id).update(chatUserMap),
       userCollection.doc(userDataDto.id).update(userDataMap),
     ]);
+  }
+
+  /// https://firebase.google.com/docs/firestore/solutions/presence?hl=en
+  @override
+  Future<void> initializeUserPresence(String userId) async {
+    final database = await _firebaseInitializer.database;
+    final firestore = await _firebaseInitializer.firestore;
+    final userStatusDatabaseRef =
+        database.ref().child('presence').child(userId);
+    final userFirestoreRef = firestore.collection('users').doc(userId);
+
+    final offline = <String, dynamic>{'isOnline': false};
+    final online = <String, dynamic>{'isOnline': true};
+    Map<String, dynamic> databaseStatusMap(Map<String, dynamic> status) =>
+        {...status, 'lastSeen': ServerValue.timestamp};
+    Map<String, dynamic> firestoreStatusMap(Map<String, dynamic> status) =>
+        {...status, 'lastSeen': FieldValue.serverTimestamp()};
+
+    database.ref('.info/connected').onValue.listen((event) async {
+      if (event.snapshot.value == null) {
+        await userFirestoreRef.update(firestoreStatusMap(offline));
+        return;
+      }
+      await userStatusDatabaseRef
+          .onDisconnect()
+          .set(databaseStatusMap(offline))
+          .then((_) {
+        userStatusDatabaseRef.set(databaseStatusMap(online));
+        userFirestoreRef.update(databaseStatusMap(online));
+      });
+    });
+  }
+
+  @override
+  Future<Stream<UserModelDto>> getUserPresence(String userId) async {
+    final firestore = await _firebaseInitializer.firestore;
+    return firestore
+        .collection(_userCollection)
+        .doc(userId)
+        .snapshots()
+        .asyncMap((doc) {
+      final data = doc.data();
+      if (data == null) return null;
+      return UserModelDto.fromJsonWithId(data, doc.id);
+    }).whereType<UserModelDto>();
   }
 
   /// Creates chat user map from [param] for fields update of database doc.

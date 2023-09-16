@@ -66,4 +66,15 @@ class FirebaseUserService implements UserService {
       return userData.copyWith(photoUrl: fileData.photoUrl);
     }
   }
+
+  @override
+  Future<void> initializeUserPresence(String userId) {
+    return _userRepository.initializeUserPresence(userId);
+  }
+
+  @override
+  Future<Stream<UserModel>> getUserPresence(String userId) async {
+    final stream = await _userRepository.getUserPresence(userId);
+    return stream.asyncMap(_userModelFromDto.create);
+  }
 }

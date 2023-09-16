@@ -10,4 +10,8 @@ abstract class UserRepository {
   Future<UserModelDto?> getUserData(String userId);
 
   Future<void> updateUserData(UserModelDto userDataDto);
+
+  Future<void> initializeUserPresence(String userId);
+
+  Future<Stream<UserModelDto>> getUserPresence(String userId);
 }
