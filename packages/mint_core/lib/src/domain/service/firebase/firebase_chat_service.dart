@@ -83,6 +83,11 @@ class FirebaseChatService implements ChatService {
     return _chatRepository.onPreviewDataFetched(message, previewData, roomId);
   }
 
+  @override
+  Future<void> markMessageAsRead(String roomId, String messageId) async {
+    return _chatRepository.markMessageAsRead(roomId, messageId);
+  }
+
   Future<void> _handlePartialFileSend(
     dynamic message,
     String roomId,

@@ -14,6 +14,7 @@ class FirebaseChatRepository implements ChatRepository {
 
   static const _roomCollection = 'chat_rooms';
   static const _chatUsersCollection = 'chat_users';
+  static const _messagesCollection = 'messages';
 
   final Factory<types.User, Map<String, dynamic>> _chatUserFromMap;
 
@@ -93,6 +94,22 @@ class FirebaseChatRepository implements ChatRepository {
       message.copyWith(previewData: previewData),
       roomId,
     );
+  }
+
+  @override
+  Future<void> markMessageAsRead(String roomId, String messageId) async {
+    final firestore = await _firebaseInitializer.firestore;
+    final messageRef = firestore
+        .collection(_roomCollection)
+        .doc(roomId)
+        .collection(_messagesCollection)
+        .doc(messageId);
+    return firestore.runTransaction((transaction) async {
+      final snapshot = await messageRef.get();
+      final seen = snapshot.get('status') as String?;
+      if (seen != null && seen == 'seen') return;
+      transaction.update(messageRef, {'status': 'seen'});
+    });
   }
 
   // Used here instead of factory to prevent circular dependency.

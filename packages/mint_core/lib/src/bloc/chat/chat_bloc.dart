@@ -167,8 +167,10 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     if (state is! ChatFetchMessagesSuccess || user == null) return;
 
     try {
+
       final loadingMessage = types.CustomMessage(
-        id: '',
+        // (!) Chat UI crashes on rapid messages without unique ID.
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
         author: types.User(id: user.id),
         type: types.MessageType.custom,
         createdAt: DateTime.now().millisecondsSinceEpoch,

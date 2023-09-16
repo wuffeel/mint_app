@@ -24,4 +24,6 @@ abstract class ChatService {
   Future<types.Room?> fetchRoom(String roomId);
 
   Future<Stream<List<types.Room>>> fetchRoomList(String userId);
+
+  Future<void> markMessageAsRead(String roomId, String messageId);
 }

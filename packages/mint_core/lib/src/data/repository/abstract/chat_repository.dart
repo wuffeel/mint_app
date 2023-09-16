@@ -18,4 +18,6 @@ abstract class ChatRepository {
   Future<Map<String, dynamic>?> fetchRoom(String roomId);
 
   Future<Stream<List<types.Room>>> fetchRoomList(String userId);
+
+  Future<void> markMessageAsRead(String roomId, String messageId);
 }
