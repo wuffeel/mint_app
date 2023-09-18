@@ -1,6 +1,6 @@
 import 'package:injectable/injectable.dart';
 
-import '../entity/user_model/user_model.dart';
+import '../entity/user_presence/user_presence.dart';
 import '../service/abstract/user_service.dart';
 
 @injectable
@@ -9,6 +9,6 @@ class GetUserPresenceUseCase {
 
   final UserService _service;
 
-  Future<Stream<UserModel>> call(String userId) =>
+  Future<Stream<UserPresence>> call(String userId) =>
       _service.getUserPresence(userId);
 }

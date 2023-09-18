@@ -13,5 +13,5 @@ abstract class UserService {
 
   Future<void> initializeUserPresence(String userId);
 
-  Future<Stream<UserModel>> getUserPresence(String userId);
+  Future<Stream<UserPresence>> getUserPresence(String userId);
 }

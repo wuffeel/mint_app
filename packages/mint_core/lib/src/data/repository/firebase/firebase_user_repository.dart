@@ -6,6 +6,7 @@ import 'package:rxdart/rxdart.dart';
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
 import '../../../../mint_module.dart';
+import '../../model/user_presence_dto/user_presence_dto.dart';
 
 class FirebaseUserRepository implements UserRepository {
   FirebaseUserRepository(
@@ -18,6 +19,7 @@ class FirebaseUserRepository implements UserRepository {
   final Factory<Map<String, dynamic>, UserModelDto> _modifiedUserDtoToMap;
 
   static const _userCollection = 'users';
+  static const _presenceCollection = 'presence';
   static const _chatUserCollection = 'chat_users';
   static const _specialistCollection = 'specialists';
 
@@ -85,9 +87,10 @@ class FirebaseUserRepository implements UserRepository {
   Future<void> initializeUserPresence(String userId) async {
     final database = await _firebaseInitializer.database;
     final firestore = await _firebaseInitializer.firestore;
-    final userStatusDatabaseRef =
-        database.ref().child('presence').child(userId);
-    final userFirestoreRef = firestore.collection('users').doc(userId);
+    final presenceDatabaseRef =
+        database.ref().child(_presenceCollection).child(userId);
+    final presenceFirestoreRef =
+        firestore.collection(_presenceCollection).doc(userId);
 
     final offline = <String, dynamic>{'isOnline': false};
     final online = <String, dynamic>{'isOnline': true};
@@ -98,31 +101,31 @@ class FirebaseUserRepository implements UserRepository {
 
     database.ref('.info/connected').onValue.listen((event) async {
       if (event.snapshot.value == null) {
-        await userFirestoreRef.update(firestoreStatusMap(offline));
+        await presenceFirestoreRef.set(firestoreStatusMap(offline));
         return;
       }
-      await userStatusDatabaseRef
+      await presenceDatabaseRef
           .onDisconnect()
           .set(databaseStatusMap(offline))
           .then((_) {
-        userStatusDatabaseRef.set(databaseStatusMap(online));
-        userFirestoreRef.update(databaseStatusMap(online));
+        presenceDatabaseRef.set(databaseStatusMap(online));
+        presenceFirestoreRef.set(databaseStatusMap(online));
       });
     });
   }
 
   @override
-  Future<Stream<UserModelDto>> getUserPresence(String userId) async {
+  Future<Stream<UserPresenceDto>> getUserPresence(String userId) async {
     final firestore = await _firebaseInitializer.firestore;
     return firestore
-        .collection(_userCollection)
+        .collection(_presenceCollection)
         .doc(userId)
         .snapshots()
         .asyncMap((doc) {
       final data = doc.data();
       if (data == null) return null;
-      return UserModelDto.fromJsonWithId(data, doc.id);
-    }).whereType<UserModelDto>();
+      return UserPresenceDto.fromJson(data);
+    }).whereType<UserPresenceDto>();
   }
 
   /// Creates chat user map from [param] for fields update of database doc.

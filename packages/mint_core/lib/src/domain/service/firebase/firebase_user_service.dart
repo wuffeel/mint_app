@@ -3,6 +3,7 @@ import 'package:injectable/injectable.dart';
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
 import '../../../../mint_module.dart';
+import '../../../data/model/user_presence_dto/user_presence_dto.dart';
 
 @injectable
 class FirebaseUserService implements UserService {
@@ -11,6 +12,7 @@ class FirebaseUserService implements UserService {
     this._storageService,
     this._userModelFromDto,
     this._userModelToDto,
+    this._userPresenceFromDto,
   );
 
   final UserRepository _userRepository;
@@ -18,6 +20,7 @@ class FirebaseUserService implements UserService {
 
   final Factory<Future<UserModel>, UserModelDto> _userModelFromDto;
   final Factory<UserModelDto, UserModel> _userModelToDto;
+  final Factory<UserPresence, UserPresenceDto> _userPresenceFromDto;
 
   @override
   Future<UserModel?> getCurrentUser() async {
@@ -73,8 +76,8 @@ class FirebaseUserService implements UserService {
   }
 
   @override
-  Future<Stream<UserModel>> getUserPresence(String userId) async {
+  Future<Stream<UserPresence>> getUserPresence(String userId) async {
     final stream = await _userRepository.getUserPresence(userId);
-    return stream.asyncMap(_userModelFromDto.create);
+    return stream.asyncMap(_userPresenceFromDto.create);
   }
 }
