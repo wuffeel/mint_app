@@ -8,11 +8,11 @@ part of 'user_presence_dto.dart';
 
 _$_UserPresenceDto _$$_UserPresenceDtoFromJson(Map json) => _$_UserPresenceDto(
       isOnline: json['isOnline'] as bool,
-      lastSeen: const DateTimeConverter().fromJson(json['lastSeen']),
+      lastSeen: const DateTimeOrNullConverter().fromJson(json['lastSeen']),
     );
 
 Map<String, dynamic> _$$_UserPresenceDtoToJson(_$_UserPresenceDto instance) =>
     <String, dynamic>{
       'isOnline': instance.isOnline,
-      'lastSeen': const DateTimeConverter().toJson(instance.lastSeen),
+      'lastSeen': const DateTimeOrNullConverter().toJson(instance.lastSeen),
     };

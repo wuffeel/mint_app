@@ -11,8 +11,8 @@ part 'user_presence_dto.g.dart';
 class UserPresenceDto with _$UserPresenceDto {
   const factory UserPresenceDto({
     required bool isOnline,
-    @DateTimeConverter()
-    required DateTime lastSeen,
+    @DateTimeOrNullConverter()
+    DateTime? lastSeen,
   }) = _UserPresenceDto;
 
   factory UserPresenceDto.fromJson(Map<String, dynamic> json) =>

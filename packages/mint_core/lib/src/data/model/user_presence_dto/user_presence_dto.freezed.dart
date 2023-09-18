@@ -21,8 +21,8 @@ UserPresenceDto _$UserPresenceDtoFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$UserPresenceDto {
   bool get isOnline => throw _privateConstructorUsedError;
-  @DateTimeConverter()
-  DateTime get lastSeen => throw _privateConstructorUsedError;
+  @DateTimeOrNullConverter()
+  DateTime? get lastSeen => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -36,7 +36,7 @@ abstract class $UserPresenceDtoCopyWith<$Res> {
           UserPresenceDto value, $Res Function(UserPresenceDto) then) =
       _$UserPresenceDtoCopyWithImpl<$Res, UserPresenceDto>;
   @useResult
-  $Res call({bool isOnline, @DateTimeConverter() DateTime lastSeen});
+  $Res call({bool isOnline, @DateTimeOrNullConverter() DateTime? lastSeen});
 }
 
 /// @nodoc
@@ -53,17 +53,17 @@ class _$UserPresenceDtoCopyWithImpl<$Res, $Val extends UserPresenceDto>
   @override
   $Res call({
     Object? isOnline = null,
-    Object? lastSeen = null,
+    Object? lastSeen = freezed,
   }) {
     return _then(_value.copyWith(
       isOnline: null == isOnline
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastSeen: null == lastSeen
+      lastSeen: freezed == lastSeen
           ? _value.lastSeen
           : lastSeen // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
     ) as $Val);
   }
 }
@@ -76,7 +76,7 @@ abstract class _$$_UserPresenceDtoCopyWith<$Res>
       __$$_UserPresenceDtoCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isOnline, @DateTimeConverter() DateTime lastSeen});
+  $Res call({bool isOnline, @DateTimeOrNullConverter() DateTime? lastSeen});
 }
 
 /// @nodoc
@@ -91,17 +91,17 @@ class __$$_UserPresenceDtoCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isOnline = null,
-    Object? lastSeen = null,
+    Object? lastSeen = freezed,
   }) {
     return _then(_$_UserPresenceDto(
       isOnline: null == isOnline
           ? _value.isOnline
           : isOnline // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastSeen: null == lastSeen
+      lastSeen: freezed == lastSeen
           ? _value.lastSeen
           : lastSeen // ignore: cast_nullable_to_non_nullable
-              as DateTime,
+              as DateTime?,
     ));
   }
 }
@@ -112,7 +112,7 @@ class _$_UserPresenceDto
     with DiagnosticableTreeMixin
     implements _UserPresenceDto {
   const _$_UserPresenceDto(
-      {required this.isOnline, @DateTimeConverter() required this.lastSeen});
+      {required this.isOnline, @DateTimeOrNullConverter() this.lastSeen});
 
   factory _$_UserPresenceDto.fromJson(Map<String, dynamic> json) =>
       _$$_UserPresenceDtoFromJson(json);
@@ -120,8 +120,8 @@ class _$_UserPresenceDto
   @override
   final bool isOnline;
   @override
-  @DateTimeConverter()
-  final DateTime lastSeen;
+  @DateTimeOrNullConverter()
+  final DateTime? lastSeen;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
@@ -169,7 +169,7 @@ class _$_UserPresenceDto
 abstract class _UserPresenceDto implements UserPresenceDto {
   const factory _UserPresenceDto(
           {required final bool isOnline,
-          @DateTimeConverter() required final DateTime lastSeen}) =
+          @DateTimeOrNullConverter() final DateTime? lastSeen}) =
       _$_UserPresenceDto;
 
   factory _UserPresenceDto.fromJson(Map<String, dynamic> json) =
@@ -178,8 +178,8 @@ abstract class _UserPresenceDto implements UserPresenceDto {
   @override
   bool get isOnline;
   @override
-  @DateTimeConverter()
-  DateTime get lastSeen;
+  @DateTimeOrNullConverter()
+  DateTime? get lastSeen;
   @override
   @JsonKey(ignore: true)
   _$$_UserPresenceDtoCopyWith<_$_UserPresenceDto> get copyWith =>
