@@ -106,7 +106,9 @@ class FirebaseChatRepository implements ChatRepository {
         .doc(messageId);
     return firestore.runTransaction((transaction) async {
       final snapshot = await messageRef.get();
-      final seen = snapshot.get('status') as String?;
+      final data = snapshot.data();
+      if (data == null) return;
+      final seen = data['status'] as String?;
       if (seen != null && seen == 'seen') return;
       transaction.update(messageRef, {'status': 'seen'});
     });
