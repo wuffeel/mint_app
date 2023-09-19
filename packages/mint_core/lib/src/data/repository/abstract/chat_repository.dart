@@ -20,4 +20,6 @@ abstract class ChatRepository {
   Future<Stream<List<types.Room>>> fetchRoomList(String userId);
 
   Future<void> markMessageAsRead(String roomId, String messageId);
+
+  Future<int> fetchUnreadMessagesCount(String roomId, String otherUserId);
 }

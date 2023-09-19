@@ -84,8 +84,13 @@ class FirebaseChatService implements ChatService {
   }
 
   @override
-  Future<void> markMessageAsRead(String roomId, String messageId) async {
+  Future<void> markMessageAsRead(String roomId, String messageId) {
     return _chatRepository.markMessageAsRead(roomId, messageId);
+  }
+
+  @override
+  Future<int> fetchUnreadMessagesCount(String roomId, String otherUserId) {
+    return _chatRepository.fetchUnreadMessagesCount(roomId, otherUserId);
   }
 
   Future<void> _handlePartialFileSend(

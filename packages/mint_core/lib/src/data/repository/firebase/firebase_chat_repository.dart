@@ -114,6 +114,27 @@ class FirebaseChatRepository implements ChatRepository {
     });
   }
 
+  @override
+  Future<int> fetchUnreadMessagesCount(
+    String roomId,
+    String otherUserId,
+  ) async {
+    final firestore = await _firebaseInitializer.firestore;
+
+    final messagesRef = firestore
+        .collection(_roomCollection)
+        .doc(roomId)
+        .collection(_messagesCollection);
+
+    final query = await messagesRef
+        .where('authorId', isEqualTo: otherUserId)
+        .where('status', isNotEqualTo: types.Status.seen.name)
+        .count()
+        .get();
+
+    return query.count;
+  }
+
   // Used here instead of factory to prevent circular dependency.
   // The problem: ChatUserFromMap needs to use List<Users>, which are
   // fetched with ChatService. ChatService dependent on ChatUserFromMap to
