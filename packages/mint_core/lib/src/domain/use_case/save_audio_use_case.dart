@@ -11,8 +11,9 @@ class SaveAudioUseCase {
 
   final FileService _service;
 
-  Future<({PartialAudio message, Uint8List bytes})> call(
-    PartialAudio audioMessage,
+  Future<({PartialAudio message, Uint8List bytes})?> call(
+    String audioPath,
+    Duration duration,
   ) =>
-      _service.saveAudio(audioMessage);
+      _service.saveAudio(audioPath, duration);
 }

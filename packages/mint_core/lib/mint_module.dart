@@ -5,6 +5,7 @@ export 'src/domain/service/abstract/chat_service.dart';
 export 'src/domain/service/abstract/storage_service.dart';
 export 'src/domain/service/abstract/user_service.dart';
 export 'src/domain/use_case/fetch_chat_room_use_case.dart';
+export 'src/domain/use_case/fetch_unread_messages_count_use_case.dart';
 export 'src/domain/use_case/get_user_presence_use_case.dart';
 export 'src/domain/use_case/initialize_user_presence_use_case.dart';
 export 'src/domain/use_case/load_file_use_case.dart';

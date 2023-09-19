@@ -73,12 +73,17 @@ abstract class FileRepositoryImpl implements FileRepository {
     throw UnimplementedError('[pickFile] has not been implemented');
   }
 
-  /// Handles saving an audio message locally.
+  /// Handles conversion of file from [audioPath] to [types.PartialAudio].
   ///
-  /// Given [audioMessage] will be returned with unique a UUID in metadata.
+  /// For native, also saving an audio message locally.
+  ///
+  /// For web, [audioPath] should be uri link to blob.
+  ///
+  /// Audio message will be returned with unique a UUID in metadata.
   @override
-  Future<({types.PartialAudio message, Uint8List bytes})> saveAudio(
-    types.PartialAudio audioMessage,
+  Future<({types.PartialAudio message, Uint8List bytes})?> saveAudio(
+    String audioPath,
+    Duration duration,
   ) async {
     throw UnimplementedError('[saveAudio] has not been implemented');
   }

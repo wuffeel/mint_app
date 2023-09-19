@@ -16,8 +16,9 @@ abstract class FileService {
 
   Future<({types.PartialFile message, Uint8List bytes})?> pickFile();
 
-  Future<({types.PartialAudio message, Uint8List bytes})> saveAudio(
-    types.PartialAudio audioMessage,
+  Future<({types.PartialAudio message, Uint8List bytes})?> saveAudio(
+    String audioPath,
+    Duration duration,
   );
 
   /// Deletes file at application document directory, if available for platform.

@@ -49,7 +49,8 @@ class ChatImagePickRequested extends ChatEvent {}
 class ChatFilePickRequested extends ChatEvent {}
 
 class ChatSaveAudioRequested extends ChatEvent {
-  ChatSaveAudioRequested(this.audioMessage);
+  ChatSaveAudioRequested(this.audioPath, this.duration);
 
-  final types.PartialAudio audioMessage;
+  final String audioPath;
+  final Duration duration;
 }

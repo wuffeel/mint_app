@@ -7,4 +7,3 @@ export 'src/domain/entity/file_data.dart';
 export 'src/domain/entity/specialist_model/specialist_model.dart';
 export 'src/domain/entity/user_model/user_model.dart';
 export 'src/domain/entity/user_presence/user_presence.dart';
-export 'src/module/mint_module.dart';

@@ -43,10 +43,11 @@ class FileServiceImpl implements FileService {
   }
 
   @override
-  Future<({types.PartialAudio message, Uint8List bytes})> saveAudio(
-    types.PartialAudio audioMessage,
+  Future<({types.PartialAudio message, Uint8List bytes})?> saveAudio(
+    String audioPath,
+    Duration duration,
   ) async {
-    return _fileRepository.saveAudio(audioMessage);
+    return _fileRepository.saveAudio(audioPath, duration);
   }
 
   @override

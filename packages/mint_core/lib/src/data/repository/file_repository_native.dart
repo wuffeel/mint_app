@@ -78,25 +78,28 @@ class FileRepositoryNative extends FileRepositoryImpl {
     return null;
   }
 
-  /// Handles saving an audio message locally.
+  /// Converts audio file message from [audioPath] to [types.PartialAudio] and
+  /// handles saving it locally in application document's dir.
   ///
-  /// Given [audioMessage] will be returned with unique a UUID.
+  /// Audio message will be returned with unique a UUID in metadata.
   @override
   Future<({types.PartialAudio message, Uint8List bytes})> saveAudio(
-    types.PartialAudio audioMessage,
+    String audioPath,
+    Duration duration,
   ) async {
     final uuid = const Uuid().v4();
-    final uri = Uri.parse(audioMessage.uri);
+    final uri = Uri.parse(audioPath);
     final file = File.fromUri(uri);
     final bytes = await file.readAsBytes();
 
-    await _writeFileAsBytes('$uuid${extension(audioMessage.name)}', bytes);
+    final fileName = file.path.split(Platform.pathSeparator).last;
+    await _writeFileAsBytes('$uuid${extension(fileName)}', bytes);
 
     final message = types.PartialAudio(
-      duration: audioMessage.duration,
-      name: audioMessage.name,
-      size: audioMessage.size,
-      uri: uri.path,
+      duration: duration,
+      name: fileName,
+      size: file.lengthSync(),
+      uri: file.uri.toString(),
       metadata: {'uuid': uuid},
     );
     return (message: message, bytes: bytes);

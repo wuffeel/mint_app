@@ -333,7 +333,8 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     final state = this.state;
     if (state is! ChatFetchMessagesSuccess) return;
     try {
-      final message = await _saveAudioUseCase(event.audioMessage);
+      final message = await _saveAudioUseCase(event.audioPath, event.duration);
+      if (message == null) return;
       add(ChatSendMessageRequested(message.message, bytes: message.bytes));
     } catch (error) {
       log('ChatSaveAudioFailure: $error');

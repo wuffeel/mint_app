@@ -1,5 +1,7 @@
 import 'dart:typed_data';
 
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
 
@@ -47,7 +49,10 @@ class FirebaseStorageRepository implements StorageRepository {
     final storage = await _firebaseInitializer.storage;
 
     final uploadedFile =
-        await storage.ref().child('files/$roomId/$fileName').putData(bytes);
+        await storage.ref().child('files/$roomId/$fileName').putData(
+              bytes,
+              SettableMetadata(contentType: kIsWeb ? 'audio/webm' : null),
+            );
 
     return uploadedFile.ref.getDownloadURL();
   }
