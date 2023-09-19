@@ -29,9 +29,15 @@ class FirebaseStorageService implements StorageService {
   Future<String> uploadChatFile(
     Uint8List bytes,
     String fileName,
-    String roomId,
-  ) {
-    return _storageRepository.uploadChatFile(bytes, fileName, roomId);
+    String roomId, {
+    String? contentType,
+  }) {
+    return _storageRepository.uploadChatFile(
+      bytes,
+      fileName,
+      roomId,
+      contentType: contentType,
+    );
   }
 
   @override

@@ -44,15 +44,15 @@ class FirebaseStorageRepository implements StorageRepository {
   Future<String> uploadChatFile(
     Uint8List bytes,
     String fileName,
-    String roomId,
-  ) async {
+    String roomId, {
+    String? contentType,
+  }) async {
     final storage = await _firebaseInitializer.storage;
 
-    final uploadedFile =
-        await storage.ref().child('files/$roomId/$fileName').putData(
-              bytes,
-              SettableMetadata(contentType: kIsWeb ? 'audio/webm' : null),
-            );
+    final uploadedFile = await storage
+        .ref()
+        .child('files/$roomId/$fileName')
+        .putData(bytes, SettableMetadata(contentType: contentType));
 
     return uploadedFile.ref.getDownloadURL();
   }

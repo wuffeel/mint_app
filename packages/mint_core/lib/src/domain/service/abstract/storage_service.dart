@@ -12,8 +12,9 @@ abstract class StorageService {
   Future<String> uploadChatFile(
     Uint8List bytes,
     String fileName,
-    String roomId,
-  );
+    String roomId, {
+    String? contentType,
+  });
 
   Future<void> deleteStorageFile(String fileUrl);
 }
