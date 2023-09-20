@@ -109,7 +109,7 @@ class FirebaseUserRepository implements UserRepository {
           .set(databaseStatusMap(offline))
           .then((_) {
         presenceDatabaseRef.set(databaseStatusMap(online));
-        presenceFirestoreRef.set(databaseStatusMap(online));
+        presenceFirestoreRef.set(firestoreStatusMap(online));
       });
     });
   }
