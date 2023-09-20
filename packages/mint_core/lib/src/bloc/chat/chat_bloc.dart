@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'dart:typed_data';
 
 import 'package:bloc/bloc.dart';
+import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
@@ -75,7 +76,7 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     this._saveAudioUseCase,
   ) : super(ChatInitial()) {
     _subscribeToUserChange();
-    on<ChatInitializeRequested>(_onChatInitialize);
+    on<ChatInitializeRequested>(_onChatInitialize, transformer: restartable());
     on<ChatFetchRoomRequested>(_onRoomFetch);
     on<ChatSendMessageRequested>(_onSendMessage);
     on<ChatDeleteMessageRequested>(_onDeleteMessage);
