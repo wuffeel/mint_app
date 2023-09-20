@@ -29,7 +29,7 @@ class FileRepositoryWeb extends FileRepositoryImpl {
   }) async {
     if (fileUri.startsWith('http')) {
       html.AnchorElement(href: fileUri)
-        ..download = fileUri
+        ..download = fileName
         ..click();
     }
     return null;
