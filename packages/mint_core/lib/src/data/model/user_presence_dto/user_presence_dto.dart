@@ -12,6 +12,7 @@ class UserPresenceDto with _$UserPresenceDto {
   const factory UserPresenceDto({
     required bool isOnline,
     @DateTimeOrNullConverter()
+    /// Nullable to handle situations when [lastSeen] has not been set yet.
     DateTime? lastSeen,
   }) = _UserPresenceDto;
 
