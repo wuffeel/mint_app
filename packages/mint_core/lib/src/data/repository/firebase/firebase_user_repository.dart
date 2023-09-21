@@ -55,6 +55,9 @@ class FirebaseUserRepository implements UserRepository {
   Future<void> logOut() async {
     final auth = await _firebaseInitializer.firebaseAuth;
 
+    final userId = auth.currentUser?.uid;
+    if (userId != null) await _setOfflineUserStatus(userId);
+
     await auth.signOut();
   }
 
@@ -86,23 +89,27 @@ class FirebaseUserRepository implements UserRepository {
   @override
   Future<void> initializeUserPresence(String userId) async {
     final database = await _firebaseInitializer.database;
-    final firestore = await _firebaseInitializer.firestore;
 
-    final presenceDatabaseRef =
-        database.ref().child(_presenceCollection).child(userId);
-    final presenceFirestoreRef =
-        firestore.collection(_presenceCollection).doc(userId);
+    final presenceDatabaseRef = await _presenceDatabaseRef(userId);
+    final presenceFirestoreRef = await _presenceFirestoreRef(userId);
+    final specialistRef = await _specialistRef(userId);
 
     final offline = {'isOnline': false};
     final online = {'isOnline': true};
+    final firestoreOnline = _firestoreStatusMap(online);
+    final firestoreOffline = _firestoreStatusMap(offline);
 
     Future<void> setFirestoreOfflineStatus() async {
-      await presenceFirestoreRef.set(_firestoreStatusMap(offline));
+      await Future.wait([
+        presenceFirestoreRef.set(firestoreOffline),
+        specialistRef.update(firestoreOffline),
+      ]);
     }
 
     void setOnlineStatus() {
       presenceDatabaseRef.set(_databaseStatusMap(online));
-      presenceFirestoreRef.set(_firestoreStatusMap(online));
+      presenceFirestoreRef.set(firestoreOnline);
+      specialistRef.update(firestoreOnline);
     }
 
     database.ref('.info/connected').onValue.listen((event) async {
@@ -150,6 +157,34 @@ class FirebaseUserRepository implements UserRepository {
     CollectionReference userCollection,
   ) {
     throw UnimplementedError('[_createUser] has not been implemented');
+  }
+
+  Future<void> _setOfflineUserStatus(String userId) async {
+    final offline = {'isOnline': false};
+    await Future.wait([
+      (await _presenceDatabaseRef(userId)).set(_firestoreStatusMap(offline)),
+      (await _presenceFirestoreRef(userId)).set(_databaseStatusMap(offline)),
+      (await _specialistRef(userId)).update(offline),
+    ]);
+  }
+
+  Future<DatabaseReference> _presenceDatabaseRef(String userId) async {
+    final database = await _firebaseInitializer.database;
+    return database.ref().child(_presenceCollection).child(userId);
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>> _presenceFirestoreRef(
+    String userId,
+  ) async {
+    final firestore = await _firebaseInitializer.firestore;
+    return firestore.collection(_presenceCollection).doc(userId);
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>> _specialistRef(
+    String userId,
+  ) async {
+    final firestore = await _firebaseInitializer.firestore;
+    return firestore.collection(_specialistCollection).doc(userId);
   }
 
   Map<String, dynamic> _databaseStatusMap(Map<String, dynamic> status) =>
