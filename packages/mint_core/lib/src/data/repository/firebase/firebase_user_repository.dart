@@ -162,8 +162,8 @@ class FirebaseUserRepository implements UserRepository {
   Future<void> _setOfflineUserStatus(String userId) async {
     final offline = {'isOnline': false};
     await Future.wait([
-      (await _presenceDatabaseRef(userId)).set(_firestoreStatusMap(offline)),
-      (await _presenceFirestoreRef(userId)).set(_databaseStatusMap(offline)),
+      (await _presenceDatabaseRef(userId)).set(_databaseStatusMap(offline)),
+      (await _presenceFirestoreRef(userId)).set(_firestoreStatusMap(offline)),
       (await _specialistRef(userId)).update(offline),
     ]);
   }
