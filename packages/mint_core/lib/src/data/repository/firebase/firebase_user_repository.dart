@@ -87,30 +87,42 @@ class FirebaseUserRepository implements UserRepository {
   Future<void> initializeUserPresence(String userId) async {
     final database = await _firebaseInitializer.database;
     final firestore = await _firebaseInitializer.firestore;
+    final userDoc =
+        await firestore.collection(_userCollection).doc(userId).get();
+    final userType = userDoc.data()?['type'] as String?;
+
     final presenceDatabaseRef =
         database.ref().child(_presenceCollection).child(userId);
     final presenceFirestoreRef =
         firestore.collection(_presenceCollection).doc(userId);
+    final specialistRef =
+        firestore.collection(_specialistCollection).doc(userId);
 
-    final offline = <String, dynamic>{'isOnline': false};
-    final online = <String, dynamic>{'isOnline': true};
-    Map<String, dynamic> databaseStatusMap(Map<String, dynamic> status) =>
-        {...status, 'lastSeen': ServerValue.timestamp};
-    Map<String, dynamic> firestoreStatusMap(Map<String, dynamic> status) =>
-        {...status, 'lastSeen': FieldValue.serverTimestamp()};
+    final offline = {'isOnline': false};
+    final online = {'isOnline': true};
+
+    Future<void> setFirestoreOfflineStatus() async {
+      await Future.wait([
+        presenceFirestoreRef.set(_firestoreStatusMap(offline)),
+        _updateSpecialistStatus(specialistRef, userType, offline),
+      ]);
+    }
+
+    void setOnlineStatus() {
+      presenceDatabaseRef.set(_databaseStatusMap(online));
+      presenceFirestoreRef.set(_firestoreStatusMap(online));
+      _updateSpecialistStatus(specialistRef, userType, online);
+    }
 
     database.ref('.info/connected').onValue.listen((event) async {
       if (event.snapshot.value == null) {
-        await presenceFirestoreRef.set(firestoreStatusMap(offline));
+        await setFirestoreOfflineStatus();
         return;
       }
       await presenceDatabaseRef
           .onDisconnect()
-          .set(databaseStatusMap(offline))
-          .then((_) {
-        presenceDatabaseRef.set(databaseStatusMap(online));
-        presenceFirestoreRef.set(firestoreStatusMap(online));
-      });
+          .set(_databaseStatusMap(offline))
+          .then((_) => setOnlineStatus());
     });
   }
 
@@ -147,6 +159,22 @@ class FirebaseUserRepository implements UserRepository {
     CollectionReference userCollection,
   ) {
     throw UnimplementedError('[_createUser] has not been implemented');
+  }
+
+  Map<String, dynamic> _databaseStatusMap(Map<String, dynamic> status) =>
+      {...status, 'lastSeen': ServerValue.timestamp};
+
+  Map<String, dynamic> _firestoreStatusMap(Map<String, dynamic> status) =>
+      {...status, 'lastSeen': FieldValue.serverTimestamp()};
+
+  Future<void> _updateSpecialistStatus(
+    DocumentReference<Map<String, dynamic>> specialistRef,
+    String? userType,
+    Map<String, bool> status,
+  ) async {
+    if (userType != null && userType == UserType.specialist.name) {
+      await specialistRef.update(status);
+    }
   }
 }
 
