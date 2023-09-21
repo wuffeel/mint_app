@@ -93,21 +93,22 @@ class FirebaseUserRepository implements UserRepository {
     final presenceDatabaseRef = await _presenceDatabaseRef(userId);
     final presenceFirestoreRef = await _presenceFirestoreRef(userId);
     final specialistRef = await _specialistRef(userId);
+    final specialistExists = await _specialistEntryExists(userId);
 
     final offline = {'isOnline': false};
     final online = {'isOnline': true};
 
     Future<void> setFirestoreOfflineStatus() async {
-      await Future.wait([
-        presenceFirestoreRef.set(_firestoreStatusMap(offline)),
-        specialistRef.update(offline),
-      ]);
+      final futures = [presenceFirestoreRef.set(_firestoreStatusMap(offline))];
+      if (specialistExists) futures.add(specialistRef.update(offline));
+
+      await Future.wait(futures);
     }
 
     void setOnlineStatus() {
       presenceDatabaseRef.set(_databaseStatusMap(online));
       presenceFirestoreRef.set(_firestoreStatusMap(online));
-      specialistRef.update(online);
+      if (specialistExists) specialistRef.update(online);
     }
 
     database.ref('.info/connected').onValue.listen((event) async {
@@ -159,11 +160,16 @@ class FirebaseUserRepository implements UserRepository {
 
   Future<void> _setOfflineUserStatus(String userId) async {
     final offline = {'isOnline': false};
-    await Future.wait([
+    final futures = [
       (await _presenceDatabaseRef(userId)).set(_databaseStatusMap(offline)),
       (await _presenceFirestoreRef(userId)).set(_firestoreStatusMap(offline)),
-      (await _specialistRef(userId)).update(offline),
-    ]);
+    ];
+    final specialistExists = await _specialistEntryExists(userId);
+    if (specialistExists) {
+      futures.add((await _specialistRef(userId)).update(offline));
+    }
+
+    await Future.wait(futures);
   }
 
   Future<DatabaseReference> _presenceDatabaseRef(String userId) async {
@@ -183,6 +189,12 @@ class FirebaseUserRepository implements UserRepository {
   ) async {
     final firestore = await _firebaseInitializer.firestore;
     return firestore.collection(_specialistCollection).doc(userId);
+  }
+
+  Future<bool> _specialistEntryExists(String specialistId) async {
+    final specialistRef = await _specialistRef(specialistId);
+    final specialistDoc = await specialistRef.get();
+    return specialistDoc.exists;
   }
 
   Map<String, dynamic> _databaseStatusMap(Map<String, dynamic> status) =>
