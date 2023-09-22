@@ -58,6 +58,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '197105291532',
     projectId: 'mint-development-b5d54',
     authDomain: 'mint-development-b5d54.firebaseapp.com',
+    databaseURL: 'https://mint-development-b5d54-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'mint-development-b5d54.appspot.com',
   );
 }

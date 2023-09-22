@@ -2,21 +2,25 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
-import '../../../data/repository/abstract/user_repository.dart';
-import '../abstract/user_service.dart';
+import '../../../../mint_module.dart';
+import '../../../data/model/user_presence_dto/user_presence_dto.dart';
 
 @injectable
 class FirebaseUserService implements UserService {
   FirebaseUserService(
     this._userRepository,
+    this._storageService,
     this._userModelFromDto,
     this._userModelToDto,
+    this._userPresenceFromDto,
   );
 
-  final Factory<Future<UserModel>, UserModelDto> _userModelFromDto;
-  final Factory<Future<UserModelDto>, UserModel> _userModelToDto;
-
   final UserRepository _userRepository;
+  final StorageService _storageService;
+
+  final Factory<Future<UserModel>, UserModelDto> _userModelFromDto;
+  final Factory<UserModelDto, UserModel> _userModelToDto;
+  final Factory<UserPresence, UserPresenceDto> _userPresenceFromDto;
 
   @override
   Future<UserModel?> getCurrentUser() async {
@@ -43,13 +47,37 @@ class FirebaseUserService implements UserService {
   }
 
   @override
-  Future<UserModel> updateUserData(UserModel userData) async {
-    final userDataDto = await _userModelToDto.create(userData);
-    await _userRepository.updateUserData(userDataDto);
-    final photoUrl = userData.photoUrl;
-    final user = photoUrl == null || photoUrl.startsWith('http')
-        ? userData
-        : await _userModelFromDto.create(userDataDto);
-    return user;
+  Future<UserModel> updateUserData(
+    UserModel userData, {
+    FileData? photoData,
+  }) async {
+    final fileData = photoData == null
+        ? null
+        : await _storageService.uploadUserPhoto(
+            photoData.bytes,
+            photoData.name,
+            userData.id,
+          );
+    if (fileData == null) {
+      await _userRepository.updateUserData(_userModelToDto.create(userData));
+      return userData;
+    } else {
+      final userDto = _userModelToDto.create(
+        userData.copyWith(photoUrl: fileData.storageUrl ?? fileData.photoUrl),
+      );
+      await _userRepository.updateUserData(userDto);
+      return userData.copyWith(photoUrl: fileData.photoUrl);
+    }
+  }
+
+  @override
+  Future<void> initializeUserPresence(String userId) {
+    return _userRepository.initializeUserPresence(userId);
+  }
+
+  @override
+  Future<Stream<UserPresence>> getUserPresence(String userId) async {
+    final stream = await _userRepository.getUserPresence(userId);
+    return stream.asyncMap(_userPresenceFromDto.create);
   }
 }

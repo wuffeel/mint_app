@@ -1,4 +1,5 @@
 import '../../../../mint_core.dart';
+import '../../model/user_presence_dto/user_presence_dto.dart';
 
 abstract class UserRepository {
   Future<UserModelDto?> getCurrentUser();
@@ -10,4 +11,8 @@ abstract class UserRepository {
   Future<UserModelDto?> getUserData(String userId);
 
   Future<void> updateUserData(UserModelDto userDataDto);
+
+  Future<void> initializeUserPresence(String userId);
+
+  Future<Stream<UserPresenceDto>> getUserPresence(String userId);
 }

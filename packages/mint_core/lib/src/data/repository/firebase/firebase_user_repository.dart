@@ -1,10 +1,13 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
+
 import '../../../../mint_assembly.dart';
 import '../../../../mint_core.dart';
-import '../abstract/firebase_initializer.dart';
-import '../abstract/user_repository.dart';
+import '../../../../mint_module.dart';
+import '../../model/user_presence_dto/user_presence_dto.dart';
 
-@lazySingleton
 class FirebaseUserRepository implements UserRepository {
   FirebaseUserRepository(
     this._firebaseInitializer,
@@ -16,6 +19,9 @@ class FirebaseUserRepository implements UserRepository {
   final Factory<Map<String, dynamic>, UserModelDto> _modifiedUserDtoToMap;
 
   static const _userCollection = 'users';
+  static const _presenceCollection = 'presence';
+  static const _chatUserCollection = 'chat_users';
+  static const _specialistCollection = 'specialists';
 
   @override
   Future<UserModelDto?> getCurrentUser() async {
@@ -26,13 +32,15 @@ class FirebaseUserRepository implements UserRepository {
 
     if (user == null) return null;
 
-    final userCollection = firestore.collection(_userCollection);
+    final userCollection =
+        firestore.collection(FirebaseUserRepository._userCollection);
     final userDoc = await userCollection.doc(user.uid).get();
     final userData = userDoc.data();
 
     if (userData == null) {
-      return UserModelDto(id: user.uid, phoneNumber: user.phoneNumber);
+      return _createUser(user.uid, user.phoneNumber, userCollection);
     }
+
     return UserModelDto.fromJsonWithId(userData, user.uid);
   }
 
@@ -46,6 +54,9 @@ class FirebaseUserRepository implements UserRepository {
   @override
   Future<void> logOut() async {
     final auth = await _firebaseInitializer.firebaseAuth;
+
+    final userId = auth.currentUser?.uid;
+    if (userId != null) await _setOfflineUserStatus(userId);
 
     await auth.signOut();
   }
@@ -64,8 +75,190 @@ class FirebaseUserRepository implements UserRepository {
   Future<void> updateUserData(UserModelDto userDataDto) async {
     final firestore = await _firebaseInitializer.firestore;
     final userCollection = firestore.collection(_userCollection);
+    final chatUserCollection = firestore.collection(_chatUserCollection);
 
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
-    return userCollection.doc(userDataDto.id).update(userDataMap);
+    final chatUserMap = _userModelDtoToChatUser(userDataDto);
+    await Future.wait([
+      chatUserCollection.doc(userDataDto.id).update(chatUserMap),
+      userCollection.doc(userDataDto.id).update(userDataMap),
+    ]);
+  }
+
+  /// https://firebase.google.com/docs/firestore/solutions/presence?hl=en
+  @override
+  Future<void> initializeUserPresence(String userId) async {
+    final database = await _firebaseInitializer.database;
+
+    final presenceDatabaseRef = await _presenceDatabaseRef(userId);
+    final presenceFirestoreRef = await _presenceFirestoreRef(userId);
+    final specialistRef = await _specialistRef(userId);
+    final specialistExists = await _specialistEntryExists(userId);
+
+    final offline = {'isOnline': false};
+    final online = {'isOnline': true};
+
+    Future<void> setFirestoreOfflineStatus() async {
+      final futures = [presenceFirestoreRef.set(_firestoreStatusMap(offline))];
+      if (specialistExists) futures.add(specialistRef.update(offline));
+
+      await Future.wait(futures);
+    }
+
+    void setOnlineStatus() {
+      presenceDatabaseRef.set(_databaseStatusMap(online));
+      presenceFirestoreRef.set(_firestoreStatusMap(online));
+      if (specialistExists) specialistRef.update(online);
+    }
+
+    database.ref('.info/connected').onValue.listen((event) async {
+      if (event.snapshot.value == null) {
+        await setFirestoreOfflineStatus();
+        return;
+      }
+      await presenceDatabaseRef
+          .onDisconnect()
+          .set(_databaseStatusMap(offline))
+          .then((_) => setOnlineStatus());
+    });
+  }
+
+  @override
+  Future<Stream<UserPresenceDto>> getUserPresence(String userId) async {
+    final firestore = await _firebaseInitializer.firestore;
+    return firestore
+        .collection(_presenceCollection)
+        .doc(userId)
+        .snapshots()
+        .asyncMap((doc) {
+      final data = doc.data();
+      if (data == null) return null;
+      return UserPresenceDto.fromJson(data);
+    }).whereType<UserPresenceDto>();
+  }
+
+  /// Creates chat user map from [param] for fields update of database doc.
+  ///
+  /// Used as method because [Factory<Map<String, dynamic>, UserModelDto>] is
+  /// already defined
+  Map<String, dynamic> _userModelDtoToChatUser(UserModelDto param) {
+    return <String, dynamic>{
+      'firstName': param.firstName,
+      'lastName': param.lastName,
+      'imageUrl': param.photoUrl,
+      'updatedAt': DateTime.now().toUtc(),
+    };
+  }
+
+  Future<UserModelDto> _createUser(
+    String uid,
+    String? phoneNumber,
+    CollectionReference userCollection,
+  ) {
+    throw UnimplementedError('[_createUser] has not been implemented');
+  }
+
+  Future<void> _setOfflineUserStatus(String userId) async {
+    final offline = {'isOnline': false};
+    final futures = [
+      (await _presenceDatabaseRef(userId)).set(_databaseStatusMap(offline)),
+      (await _presenceFirestoreRef(userId)).set(_firestoreStatusMap(offline)),
+    ];
+    final specialistExists = await _specialistEntryExists(userId);
+    if (specialistExists) {
+      futures.add((await _specialistRef(userId)).update(offline));
+    }
+
+    await Future.wait(futures);
+  }
+
+  Future<DatabaseReference> _presenceDatabaseRef(String userId) async {
+    final database = await _firebaseInitializer.database;
+    return database.ref().child(_presenceCollection).child(userId);
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>> _presenceFirestoreRef(
+    String userId,
+  ) async {
+    final firestore = await _firebaseInitializer.firestore;
+    return firestore.collection(_presenceCollection).doc(userId);
+  }
+
+  Future<DocumentReference<Map<String, dynamic>>> _specialistRef(
+    String userId,
+  ) async {
+    final firestore = await _firebaseInitializer.firestore;
+    return firestore.collection(_specialistCollection).doc(userId);
+  }
+
+  Future<bool> _specialistEntryExists(String specialistId) async {
+    final specialistRef = await _specialistRef(specialistId);
+    final specialistDoc = await specialistRef.get();
+    return specialistDoc.exists;
+  }
+
+  Map<String, dynamic> _databaseStatusMap(Map<String, dynamic> status) =>
+      {...status, 'lastSeen': ServerValue.timestamp};
+
+  Map<String, dynamic> _firestoreStatusMap(Map<String, dynamic> status) =>
+      {...status, 'lastSeen': FieldValue.serverTimestamp()};
+}
+
+@web
+@LazySingleton(as: FirebaseUserRepository)
+class FirebaseWebUserRepository extends FirebaseUserRepository {
+  FirebaseWebUserRepository(
+    super.firebaseInitializer,
+    super.modifiedUserDtoToMap,
+  );
+
+  @override
+  Future<void> updateUserData(UserModelDto userDataDto) async {
+    await super.updateUserData(userDataDto);
+
+    final firestore = await _firebaseInitializer.firestore;
+    final specialistCollection =
+        firestore.collection(FirebaseUserRepository._specialistCollection);
+
+    final storageUrl = userDataDto.photoUrl;
+    if (storageUrl == null) return;
+    return specialistCollection
+        .doc(userDataDto.id)
+        .update({'photoUrl': storageUrl});
+  }
+
+  @override
+  Future<UserModelDto> _createUser(
+    String uid,
+    String? phoneNumber,
+    CollectionReference userCollection,
+  ) async {
+    final userModelDto = UserModelDto(id: uid, phoneNumber: phoneNumber);
+    final userModelDtoMap = userModelDto.toJsonWithoutId();
+    await userCollection.doc(uid).set(userModelDtoMap);
+
+    return userModelDto;
+  }
+}
+
+@native
+@LazySingleton(as: FirebaseUserRepository)
+class FirebaseNativeUserRepository extends FirebaseUserRepository {
+  FirebaseNativeUserRepository(
+    super.firebaseInitializer,
+    super.modifiedUserDtoToMap,
+  );
+
+  @override
+  Future<PatientUserDto> _createUser(
+    String uid,
+    String? phoneNumber,
+    CollectionReference userCollection,
+  ) async {
+    final userModelDto = PatientUserDto(id: uid, phoneNumber: phoneNumber);
+    final userModelDtoMap = userModelDto.toJsonWithoutId();
+    await userCollection.doc(uid).set(userModelDtoMap);
+
+    return userModelDto;
   }
 }

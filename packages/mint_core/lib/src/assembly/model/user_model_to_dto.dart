@@ -2,21 +2,15 @@ import 'package:injectable/injectable.dart';
 
 import '../../data/model/user_model_dto/user_model_dto.dart';
 import '../../domain/entity/user_model/user_model.dart';
-import '../../domain/service/abstract/storage_service.dart';
 import '../../injector/injector.dart';
 import '../../utils/date_time_utils.dart';
 import '../factory.dart';
 
 @web
-@Injectable(as: Factory<Future<UserModelDto>, UserModel>)
-class UserModelToDto implements Factory<Future<UserModelDto>, UserModel> {
-  UserModelToDto(this._service);
-
-  final StorageService _service;
-
+@Injectable(as: Factory<UserModelDto, UserModel>)
+class UserModelToDto implements Factory<UserModelDto, UserModel> {
   @override
-  Future<UserModelDto> create(UserModel param) async {
-    final photo = param.photoUrl;
+  UserModelDto create(UserModel param) {
     final dateOfBirth = param.dateOfBirth;
     return UserModelDto(
       id: param.id,
@@ -26,24 +20,17 @@ class UserModelToDto implements Factory<Future<UserModelDto>, UserModel> {
       dateOfBirth: dateOfBirth != null
           ? DateTimeUtils.toUtcDateOnly(dateOfBirth)
           : dateOfBirth,
-      photoUrl: photo != null && !photo.startsWith('http')
-          ? await _service.uploadUserPhoto(photo, param.id)
-          : photo,
+      photoUrl: param.photoUrl,
       phoneNumber: param.phoneNumber,
     );
   }
 }
 
 @native
-@Injectable(as: Factory<Future<UserModelDto>, UserModel>)
-class PatientUserToDto implements Factory<Future<UserModelDto>, UserModel> {
-  PatientUserToDto(this._service);
-
-  final StorageService _service;
-
+@Injectable(as: Factory<UserModelDto, UserModel>)
+class PatientUserToDto implements Factory<UserModelDto, UserModel> {
   @override
-  Future<UserModelDto> create(UserModel param) async {
-    final photo = param.photoUrl;
+  UserModelDto create(UserModel param) {
     final dateOfBirth = param.dateOfBirth;
     if (param is PatientUser) {
       return PatientUserDto(
@@ -55,9 +42,7 @@ class PatientUserToDto implements Factory<Future<UserModelDto>, UserModel> {
             ? DateTimeUtils.toUtcDateOnly(dateOfBirth)
             : dateOfBirth,
         pinCode: param.pinCode,
-        photoUrl: photo != null && !photo.startsWith('http')
-            ? await _service.uploadUserPhoto(photo, param.id)
-            : photo,
+        photoUrl: param.photoUrl,
         phoneNumber: param.phoneNumber,
       );
     }
@@ -69,9 +54,7 @@ class PatientUserToDto implements Factory<Future<UserModelDto>, UserModel> {
       dateOfBirth: dateOfBirth != null
           ? DateTimeUtils.toUtcDateOnly(dateOfBirth)
           : dateOfBirth,
-      photoUrl: photo != null && !photo.startsWith('http')
-          ? await _service.uploadUserPhoto(photo, param.id)
-          : photo,
+      photoUrl: param.photoUrl,
       phoneNumber: param.phoneNumber,
     );
   }

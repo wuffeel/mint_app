@@ -15,15 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
 
 UserModelDto _$UserModelDtoFromJson(Map<String, dynamic> json) {
-  switch (json['runtimeType']) {
-    case 'default':
-      return _UserModelDto.fromJson(json);
+  switch (json['type']) {
     case 'patient':
       return PatientUserDto.fromJson(json);
 
     default:
-      throw CheckedFromJsonException(json, 'runtimeType', 'UserModelDto',
-          'Invalid union type "${json['runtimeType']}"!');
+      return _UserModelDto.fromJson(json);
   }
 }
 
@@ -284,7 +281,7 @@ class _$_UserModelDto extends _UserModelDto with DiagnosticableTreeMixin {
       this.phoneNumber,
       this.photoUrl,
       final String? $type})
-      : $type = $type ?? 'default',
+      : $type = $type ?? 'specialist',
         super._();
 
   factory _$_UserModelDto.fromJson(Map<String, dynamic> json) =>
@@ -306,7 +303,7 @@ class _$_UserModelDto extends _UserModelDto with DiagnosticableTreeMixin {
   @override
   final String? photoUrl;
 
-  @JsonKey(name: 'runtimeType')
+  @JsonKey(name: 'type')
   final String $type;
 
   @override
@@ -630,7 +627,7 @@ class _$PatientUserDto extends PatientUserDto with DiagnosticableTreeMixin {
   @override
   final String? photoUrl;
 
-  @JsonKey(name: 'runtimeType')
+  @JsonKey(name: 'type')
   final String $type;
 
   @override

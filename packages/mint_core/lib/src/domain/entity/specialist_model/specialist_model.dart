@@ -18,4 +18,8 @@ class SpecialistModel with _$SpecialistModel {
     @Default(0.0) double rating,
     @Default(0) int reviewCount,
   }) = _SpecialistModel;
+
+  const SpecialistModel._();
+
+  String? get fullName => '$firstName $lastName';
 }

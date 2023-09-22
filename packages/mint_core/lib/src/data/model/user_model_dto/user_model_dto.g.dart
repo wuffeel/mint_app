@@ -15,7 +15,7 @@ _$_UserModelDto _$$_UserModelDtoFromJson(Map json) => _$_UserModelDto(
       lastName: json['lastName'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       photoUrl: json['photoUrl'] as String?,
-      $type: json['runtimeType'] as String?,
+      $type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$$_UserModelDtoToJson(_$_UserModelDto instance) =>
@@ -28,7 +28,7 @@ Map<String, dynamic> _$$_UserModelDtoToJson(_$_UserModelDto instance) =>
       'lastName': instance.lastName,
       'phoneNumber': instance.phoneNumber,
       'photoUrl': instance.photoUrl,
-      'runtimeType': instance.$type,
+      'type': instance.$type,
     };
 
 _$PatientUserDto _$$PatientUserDtoFromJson(Map json) => _$PatientUserDto(
@@ -41,7 +41,7 @@ _$PatientUserDto _$$PatientUserDtoFromJson(Map json) => _$PatientUserDto(
       pinCode: json['pinCode'] as String?,
       phoneNumber: json['phoneNumber'] as String?,
       photoUrl: json['photoUrl'] as String?,
-      $type: json['runtimeType'] as String?,
+      $type: json['type'] as String?,
     );
 
 Map<String, dynamic> _$$PatientUserDtoToJson(_$PatientUserDto instance) =>
@@ -55,5 +55,5 @@ Map<String, dynamic> _$$PatientUserDtoToJson(_$PatientUserDto instance) =>
       'pinCode': instance.pinCode,
       'phoneNumber': instance.phoneNumber,
       'photoUrl': instance.photoUrl,
-      'runtimeType': instance.$type,
+      'type': instance.$type,
     };

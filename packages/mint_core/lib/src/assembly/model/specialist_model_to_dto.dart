@@ -10,16 +10,16 @@ class SpecialistModelToDto
     implements Factory<SpecialistModelDto, SpecialistModel> {
   @override
   SpecialistModelDto create(SpecialistModel param) => SpecialistModelDto(
-    id: param.id,
-    firstName: param.firstName,
-    lastName: param.lastName,
-    price: param.price,
-    experience: DateTimeUtils.toUtcDateOnly(param.experience),
-    specializations: param.specializations,
-    rating: param.rating,
-    reviewCount: param.reviewCount,
-    photoUrl: param.photoUrl,
-    about: param.about,
-    education: param.education,
-  );
+        id: param.id,
+        firstName: param.firstName,
+        lastName: param.lastName,
+        price: param.price,
+        experience: DateTimeUtils.toUtcDateOnly(param.experience),
+        specializations: param.specializations,
+        rating: param.rating,
+        reviewCount: param.reviewCount,
+        photoUrl: param.photoUrl,
+        about: param.about,
+        education: param.education,
+      );
 }

@@ -223,9 +223,7 @@ class __$$_SpecialistModelCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_SpecialistModel
-    with DiagnosticableTreeMixin
-    implements _SpecialistModel {
+class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
   const _$_SpecialistModel(
       {required this.id,
       required this.experience,
@@ -238,7 +236,8 @@ class _$_SpecialistModel
       this.photoUrl,
       this.rating = 0.0,
       this.reviewCount = 0})
-      : _specializations = specializations;
+      : _specializations = specializations,
+        super._();
 
   @override
   final String id;
@@ -341,7 +340,7 @@ class _$_SpecialistModel
       __$$_SpecialistModelCopyWithImpl<_$_SpecialistModel>(this, _$identity);
 }
 
-abstract class _SpecialistModel implements SpecialistModel {
+abstract class _SpecialistModel extends SpecialistModel {
   const factory _SpecialistModel(
       {required final String id,
       required final DateTime experience,
@@ -354,6 +353,7 @@ abstract class _SpecialistModel implements SpecialistModel {
       final String? photoUrl,
       final double rating,
       final int reviewCount}) = _$_SpecialistModel;
+  const _SpecialistModel._() : super._();
 
   @override
   String get id;

@@ -1,5 +1,7 @@
-import 'dart:io';
+import 'dart:typed_data';
 
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
 
@@ -25,27 +27,32 @@ class FirebaseStorageRepository implements StorageRepository {
   }
 
   @override
-  Future<String> uploadUserPhoto(String filePath, String userId) async {
+  Future<({String photoUrl, String? storageUrl})> uploadUserPhoto(
+    Uint8List bytes,
+    String fileName,
+    String userId,
+  ) async {
     final storage = await _firebaseInitializer.storage;
 
-    final file = File(filePath);
-    final storagePath = 'users/$userId${extension(file.path)}';
-    await storage.ref().child(storagePath).putFile(file);
-    return storagePath;
+    final storagePath = 'users/$userId${extension(fileName)}';
+    final file = await storage.ref().child(storagePath).putData(bytes);
+    final photoUrl = await file.ref.getDownloadURL();
+    return (photoUrl: photoUrl, storageUrl: storagePath);
   }
 
   @override
   Future<String> uploadChatFile(
-    String filePath,
-    String fileId,
-    String roomId,
-  ) async {
+    Uint8List bytes,
+    String fileName,
+    String roomId, {
+    String? contentType,
+  }) async {
     final storage = await _firebaseInitializer.storage;
 
-    final file = File(filePath);
-    final uploadedFile = await storage.ref()
-        .child('files/$roomId/$fileId${extension(file.path)}')
-        .putFile(file);
+    final uploadedFile = await storage
+        .ref()
+        .child('files/$roomId/$fileName')
+        .putData(bytes, SettableMetadata(contentType: contentType));
 
     return uploadedFile.ref.getDownloadURL();
   }

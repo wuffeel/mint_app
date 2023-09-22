@@ -9,5 +9,9 @@ abstract class UserService {
 
   Future<UserModel?> getUserData(String userId);
 
-  Future<UserModel> updateUserData(UserModel userData);
+  Future<UserModel> updateUserData(UserModel userData, {FileData? photoData});
+
+  Future<void> initializeUserPresence(String userId);
+
+  Future<Stream<UserPresence>> getUserPresence(String userId);
 }
