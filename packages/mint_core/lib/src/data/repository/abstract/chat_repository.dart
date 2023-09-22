@@ -15,7 +15,7 @@ abstract class ChatRepository {
     String roomId,
   );
 
-  Future<Map<String, dynamic>?> fetchRoom(String roomId);
+  Future<types.Room?> fetchRoom(String roomId);
 
   Future<Stream<List<types.Room>>> fetchRoomList(String userId);
 

@@ -5,7 +5,6 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
 
-import '../../../../mint_assembly.dart';
 import '../../../../mint_module.dart';
 import '../../../data/repository/abstract/chat_repository.dart';
 import '../abstract/file_service.dart';
@@ -16,15 +15,12 @@ class FirebaseChatService implements ChatService {
     this._chatRepository,
     this._storageService,
     this._fileService,
-    this._chatRoomFromMap,
   );
 
   final ChatRepository _chatRepository;
 
   final StorageService _storageService;
   final FileService _fileService;
-
-  final Factory<types.Room?, Map<String, dynamic>> _chatRoomFromMap;
 
   @override
   Future<types.Room> createRoom(String userId, String specialistId) {
@@ -33,9 +29,7 @@ class FirebaseChatService implements ChatService {
 
   @override
   Future<types.Room?> fetchRoom(String roomId) async {
-    final room = await _chatRepository.fetchRoom(roomId);
-    if (room == null) return null;
-    return _chatRoomFromMap.create(room);
+    return _chatRepository.fetchRoom(roomId);
   }
 
   @override

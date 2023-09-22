@@ -4,6 +4,7 @@ import 'package:injectable/injectable.dart';
 
 import '../../../../mint_assembly.dart';
 import '../../../../mint_module.dart';
+import '../../../../mint_utils.dart';
 import '../abstract/chat_repository.dart';
 
 @lazySingleton
@@ -47,7 +48,7 @@ class FirebaseChatRepository implements ChatRepository {
   }
 
   @override
-  Future<Map<String, dynamic>?> fetchRoom(String roomId) async {
+  Future<types.Room?> fetchRoom(String roomId) async {
     final roomCollection = await _roomCollectionRef;
     final roomSnap = await roomCollection.doc(roomId).get();
     final data = roomSnap.data();
@@ -57,10 +58,15 @@ class FirebaseChatRepository implements ChatRepository {
 
     final users = await _getUsersFromIds(userIds);
 
-    data['id'] = roomSnap.id;
-    data['users'] = users;
-
-    return data;
+    return types.Room(
+      id: roomSnap.id,
+      createdAt: DateTimeUtils.tryConvertToDateTime(data['createdAt'])
+          ?.millisecondsSinceEpoch,
+      type: types.RoomType.direct,
+      updatedAt: DateTimeUtils.tryConvertToDateTime(data['updatedAt'])
+          ?.millisecondsSinceEpoch,
+      users: users,
+    );
   }
 
   @override
