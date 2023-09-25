@@ -14,5 +14,7 @@ abstract class UserRepository {
 
   Future<void> initializeUserPresence(String userId);
 
+  Future<void> cancelUserPresenceSubscription();
+
   Future<Stream<UserPresenceDto>> getUserPresence(String userId);
 }

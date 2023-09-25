@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
@@ -17,6 +19,8 @@ class FirebaseUserRepository implements UserRepository {
   final FirebaseInitializer _firebaseInitializer;
 
   final Factory<Map<String, dynamic>, UserModelDto> _modifiedUserDtoToMap;
+
+  StreamSubscription<DatabaseEvent>? _userPresenceSubscription;
 
   static const _userCollection = 'users';
   static const _presenceCollection = 'presence';
@@ -111,7 +115,8 @@ class FirebaseUserRepository implements UserRepository {
       if (specialistExists) specialistRef.update(online);
     }
 
-    database.ref('.info/connected').onValue.listen((event) async {
+    _userPresenceSubscription =
+        database.ref('.info/connected').onValue.listen((event) async {
       if (event.snapshot.value == null) {
         await setFirestoreOfflineStatus();
         return;
@@ -121,6 +126,11 @@ class FirebaseUserRepository implements UserRepository {
           .set(_databaseStatusMap(offline))
           .then((_) => setOnlineStatus());
     });
+  }
+
+  @override
+  Future<void> cancelUserPresenceSubscription() async {
+    await _userPresenceSubscription?.cancel();
   }
 
   @override

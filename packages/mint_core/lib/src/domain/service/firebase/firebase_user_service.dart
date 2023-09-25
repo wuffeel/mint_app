@@ -36,7 +36,10 @@ class FirebaseUserService implements UserService {
 
   @override
   Future<void> logOut() async {
-    await _userRepository.logOut();
+    await Future.wait([
+      _userRepository.cancelUserPresenceSubscription(),
+      _userRepository.logOut(),
+    ]);
   }
 
   @override
