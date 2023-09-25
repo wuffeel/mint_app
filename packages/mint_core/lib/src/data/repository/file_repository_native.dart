@@ -56,7 +56,7 @@ class FileRepositoryNative extends FileRepositoryImpl {
   /// a unique UUID.
   @override
   Future<({types.PartialFile message, Uint8List bytes})?> pickFile() async {
-    final file = await FilePicker.platform.pickFiles(withData: true);
+    final file = await FilePicker.platform.pickFiles(withReadStream: true);
 
     if (file != null && file.files.isNotEmpty) {
       final uuid = const Uuid().v4();
@@ -69,8 +69,9 @@ class FileRepositoryNative extends FileRepositoryImpl {
         metadata: {'uuid': uuid},
       );
 
-      final bytes = pickFile.bytes;
-      if (bytes == null) return null;
+      final readStream = pickFile.readStream;
+      if (readStream == null) return null;
+      final bytes = await _convertStreamToUint8List(readStream);
       await _writeFileAsBytes('$uuid${extension(pickFile.name)}', bytes);
 
       return (message: message, bytes: bytes);
@@ -143,5 +144,13 @@ class FileRepositoryNative extends FileRepositoryImpl {
     final localPath = await _getLocalFilePath(fileName);
     final localFile = File(localPath);
     await localFile.writeAsBytes(bytes);
+  }
+
+  Future<Uint8List> _convertStreamToUint8List(Stream<List<int>> stream) async {
+    final chunks = <List<int>>[];
+    await for (final chunk in stream) {
+      chunks.add(chunk);
+    }
+    return Uint8List.fromList(chunks.expand((x) => x).toList());
   }
 }
