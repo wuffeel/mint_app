@@ -146,7 +146,7 @@ class FirebaseUserRepository implements UserRepository {
       'firstName': param.firstName,
       'lastName': param.lastName,
       'imageUrl': param.photoUrl,
-      'updatedAt': DateTime.now().toUtc(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
   }
 
