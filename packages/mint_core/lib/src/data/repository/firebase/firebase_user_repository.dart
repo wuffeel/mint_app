@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -41,7 +42,7 @@ class FirebaseUserRepository implements UserRepository {
     final userDoc = await userCollection.doc(user.uid).get();
     final userData = userDoc.data();
 
-    if (userData == null) {
+    if (userData == null || userData.isEmpty) {
       return _createUser(user.uid, user.phoneNumber, userCollection);
     }
 
