@@ -58,9 +58,9 @@ class SpecialistWorkInfoFromDto
   /// }
   /// ```
   Map<String, List<DateTime>> _getWorkHours(
-      Map<String, WorkDayPeriod> workHours,
-      int consultationMinutes,
-      ) {
+    Map<String, WorkDayPeriod> workHours,
+    int consultationMinutes,
+  ) {
     final result = <String, List<DateTime>>{};
 
     for (final workHour in workHours.entries) {
@@ -71,9 +71,9 @@ class SpecialistWorkInfoFromDto
       if (startOfWorkDay == null || endOfWorkDay == null) continue;
 
       final startDateTime =
-      DateFormat('h:mm a').parse(startOfWorkDay, true).toLocal();
+          DateFormat('h:mm a').parse(startOfWorkDay, true).toLocal();
       var endDateTime =
-      DateFormat('h:mm a').parse(endOfWorkDay, true).toLocal();
+          DateFormat('h:mm a').parse(endOfWorkDay, true).toLocal();
 
       if (endDateTime.isBefore(startDateTime)) {
         endDateTime = endDateTime.add(const Duration(days: 1));
@@ -105,10 +105,10 @@ class SpecialistWorkInfoFromDto
   /// Generates a list of DateTime instances representing work hours between
   /// [startDateTime] and [endDateTime].
   List<DateTime> _generateWorkHoursList(
-      DateTime startDateTime,
-      DateTime endDateTime,
-      int consultationMinutes,
-      ) {
+    DateTime startDateTime,
+    DateTime endDateTime,
+    int consultationMinutes,
+  ) {
     final workHoursList = <DateTime>[];
 
     var currentHour = startDateTime;
@@ -126,10 +126,10 @@ class SpecialistWorkInfoFromDto
 
   /// Adds work hours to the [result] map for a specific weekday.
   void _addWorkHoursToResult(
-      Map<String, List<DateTime>> result,
-      String weekday,
-      List<DateTime> workHoursList,
-      ) {
+    Map<String, List<DateTime>> result,
+    String weekday,
+    List<DateTime> workHoursList,
+  ) {
     final dayList = result[weekday];
     if (dayList == null) {
       result[weekday] = workHoursList;
@@ -142,12 +142,12 @@ class SpecialistWorkInfoFromDto
   /// Adds work hours to the next day of [result] map in case work hours
   /// extend beyond the current day.
   void _addWorkHoursToNextDay(
-      Map<String, List<DateTime>> result,
-      String weekday,
-      List<DateTime> workHoursList,
-      DateTime endDateTime,
-      int consultationMinutes,
-      ) {
+    Map<String, List<DateTime>> result,
+    String weekday,
+    List<DateTime> workHoursList,
+    DateTime endDateTime,
+    int consultationMinutes,
+  ) {
     final nextDayWorkHours = <DateTime>[];
     var currentHour = workHoursList.last.add(
       Duration(minutes: consultationMinutes),
