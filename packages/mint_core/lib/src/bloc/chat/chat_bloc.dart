@@ -168,21 +168,8 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     if (state is! ChatFetchMessagesSuccess || user == null) return;
 
     try {
+      if (state is! ChatMessageLoading) _emitLoadingMessageState(state, emit);
 
-      final loadingMessage = types.CustomMessage(
-        // (!) Chat UI crashes on rapid messages without unique ID.
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        author: types.User(id: user.id),
-        type: types.MessageType.custom,
-        createdAt: DateTime.now().millisecondsSinceEpoch,
-      );
-      emit(
-        ChatMessageLoading(
-          [loadingMessage, ...state.messages],
-          state.room,
-          state.senderId,
-        ),
-      );
       await _sendMessageUseCase(
         event.message,
         state.room.id,
@@ -234,10 +221,16 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     try {
+      final state = this.state;
+
+      _emitLoadingMessageState(state, emit);
       final message = await _pickImageUseCase();
 
       if (message != null) {
         add(ChatSendMessageRequested(message.message, bytes: message.bytes));
+      } else {
+        /// Undo loading message state
+        emit(state);
       }
     } catch (error) {
       log('ChatImagePickFailure: $error');
@@ -252,10 +245,14 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     if (state is! ChatFetchMessagesSuccess) return;
 
     try {
+      _emitLoadingMessageState(state, emit);
       final message = await _pickFileUseCase();
 
       if (message != null) {
         add(ChatSendMessageRequested(message.message, bytes: message.bytes));
+      } else {
+        /// Undo loading message state
+        emit(state);
       }
     } catch (error) {
       log('ChatFilePickFailure: $error');
@@ -341,5 +338,27 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
       log('ChatSaveAudioFailure: $error');
       emit(ChatSaveAudioFailure(state.messages, state.room, state.senderId));
     }
+  }
+
+  /// Used for emitting [ChatMessageLoading] state.
+  ///
+  /// Currently, loading message state is used as inserted
+  /// [types.CustomMessage] with timestamp when function is triggered.
+  void _emitLoadingMessageState(ChatState state, Emitter<ChatState> emit) {
+    if (state is! ChatFetchMessagesSuccess) return;
+    final loadingMessage = types.CustomMessage(
+      // (!) Chat UI crashes on rapid messages without unique ID.
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      author: types.User(id: state.senderId),
+      type: types.MessageType.custom,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    emit(
+      ChatMessageLoading(
+        [loadingMessage, ...state.messages],
+        state.room,
+        state.senderId,
+      ),
+    );
   }
 }
