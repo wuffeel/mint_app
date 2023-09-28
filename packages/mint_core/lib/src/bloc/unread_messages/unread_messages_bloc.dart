@@ -4,7 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
-import 'package:mint_core/mint_module.dart';
+
+import '../../../mint_module.dart';
 
 part 'unread_messages_event.dart';
 
