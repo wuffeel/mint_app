@@ -76,13 +76,17 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> updateUserData(UserModelDto userDataDto) async {
+  Future<void> updateUserData(
+    UserModelDto userDataDto, {
+    String? photoUrl,
+  }) async {
     final firestore = await _firebaseInitializer.firestore;
     final userCollection = firestore.collection(_userCollection);
     final chatUserCollection = firestore.collection(_chatUserCollection);
 
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
-    final chatUserMap = _userModelDtoToChatUser(userDataDto);
+    final chatUserMap =
+        _userModelDtoToChatUser(userDataDto, photoUrl: photoUrl);
     await Future.wait([
       chatUserCollection.doc(userDataDto.id).update(chatUserMap),
       userCollection.doc(userDataDto.id).update(userDataMap),
@@ -151,13 +155,17 @@ class FirebaseUserRepository implements UserRepository {
   ///
   /// Used as method because [Factory<Map<String, dynamic>, UserModelDto>] is
   /// already defined
-  Map<String, dynamic> _userModelDtoToChatUser(UserModelDto param) {
-    return <String, dynamic>{
+  Map<String, dynamic> _userModelDtoToChatUser(
+    UserModelDto param, {
+    String? photoUrl,
+  }) {
+    final chatUserMap = <String, dynamic>{
       'firstName': param.firstName,
       'lastName': param.lastName,
-      'imageUrl': param.photoUrl,
       'updatedAt': FieldValue.serverTimestamp(),
     };
+    if (photoUrl != null) chatUserMap['imageUrl'] = photoUrl;
+    return chatUserMap;
   }
 
   Future<UserModelDto> _createUser(
@@ -223,7 +231,10 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
   );
 
   @override
-  Future<void> updateUserData(UserModelDto userDataDto) async {
+  Future<void> updateUserData(
+    UserModelDto userDataDto, {
+    String? photoUrl,
+  }) async {
     await super.updateUserData(userDataDto);
 
     final firestore = await _firebaseInitializer.firestore;

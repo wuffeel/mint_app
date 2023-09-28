@@ -10,7 +10,7 @@ abstract class UserRepository {
 
   Future<UserModelDto?> getUserData(String userId);
 
-  Future<void> updateUserData(UserModelDto userDataDto);
+  Future<void> updateUserData(UserModelDto userDataDto, {String? photoUrl});
 
   Future<void> initializeUserPresence(String userId);
 

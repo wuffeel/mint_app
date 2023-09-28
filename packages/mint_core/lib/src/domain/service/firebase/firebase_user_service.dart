@@ -68,7 +68,10 @@ class FirebaseUserService implements UserService {
       final userDto = _userModelToDto.create(
         userData.copyWith(photoUrl: fileData.storageUrl ?? fileData.photoUrl),
       );
-      await _userRepository.updateUserData(userDto);
+      await _userRepository.updateUserData(
+        userDto,
+        photoUrl: fileData.photoUrl,
+      );
       return userData.copyWith(photoUrl: fileData.photoUrl);
     }
   }
