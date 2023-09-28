@@ -84,7 +84,9 @@ class FirebaseUserRepository implements UserRepository {
     final userCollection = firestore.collection(_userCollection);
     final chatUserCollection = firestore.collection(_chatUserCollection);
 
+    /// Data to be updated for user in [_userCollection].
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
+    /// Data to be updated for user in [_chatUserCollection]
     final chatUserMap =
         _userModelDtoToChatUser(userDataDto, photoUrl: photoUrl);
     await Future.wait([

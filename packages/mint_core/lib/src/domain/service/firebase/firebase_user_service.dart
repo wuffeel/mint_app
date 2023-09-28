@@ -61,17 +61,21 @@ class FirebaseUserService implements UserService {
             photoData.name,
             userData.id,
           );
+
     if (fileData == null) {
+      /// No photo changes, use only user data.
       await _userRepository.updateUserData(_userModelToDto.create(userData));
       return userData;
     } else {
+      final photoUrl = fileData.photoUrl;
+
       final userDto = _userModelToDto.create(
-        userData.copyWith(photoUrl: fileData.storageUrl ?? fileData.photoUrl),
+        userData.copyWith(photoUrl: fileData.storageUrl ?? photoUrl),
       );
-      await _userRepository.updateUserData(
-        userDto,
-        photoUrl: fileData.photoUrl,
-      );
+
+      /// For user in 'users' collection, [fileData.storageUrl] is set,
+      /// for user in 'chat_users' collection, [photoUrl] is set.
+      await _userRepository.updateUserData(userDto, photoUrl: photoUrl);
       return userData.copyWith(photoUrl: fileData.photoUrl);
     }
   }
