@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:mime/mime.dart';
 import 'package:path/path.dart';
 
 import '../abstract/firebase_initializer.dart';
@@ -44,15 +45,15 @@ class FirebaseStorageRepository implements StorageRepository {
   Future<String> uploadChatFile(
     Uint8List bytes,
     String fileName,
-    String roomId, {
-    String? contentType,
-  }) async {
+    String roomId,
+  ) async {
     final storage = await _firebaseInitializer.storage;
 
-    final uploadedFile = await storage
-        .ref()
-        .child('files/$roomId/$fileName')
-        .putData(bytes, SettableMetadata(contentType: contentType));
+    final storageRef = storage.ref().child('files/$roomId/$fileName');
+    final uploadedFile = await storageRef.putData(
+      bytes,
+      SettableMetadata(contentType: lookupMimeType(fileName)),
+    );
 
     return uploadedFile.ref.getDownloadURL();
   }
