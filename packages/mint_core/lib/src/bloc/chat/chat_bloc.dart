@@ -264,63 +264,38 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
     Emitter<ChatState> emit,
   ) async {
     final state = this.state;
-    if (state is! ChatFetchMessagesSuccess) return;
-    final messageList = state.messages;
     final message = event.message;
+    if (state is! ChatFetchMessagesSuccess || message is! types.FileMessage) {
+      return;
+    }
+
+    ChatState fetchSuccessState(List<types.Message> messages) =>
+        ChatFetchMessagesSuccess(messages, state.room, state.senderId);
 
     try {
-      final uuid = message.metadata?['uuid'] as String?;
-      final messageName = message is types.FileMessage
-          ? message.name
-          : message is types.AudioMessage
-              ? message.name
-              : null;
-
-      final messageUri = message is types.FileMessage
-          ? message.uri
-          : message is types.AudioMessage
-              ? message.uri
-              : null;
-      if (messageName == null || messageUri == null) return;
-      final messageId =
-          uuid != null ? '$uuid${extension(messageName)}' : messageName;
+      final messageId = _getMessageId(message, event);
 
       await _loadFileUseCase(
         messageId,
-        messageUri,
+        message.uri,
         onLoadingCallback: () {
-          final loadingMessageList = messageList.map((element) {
-            return element.id != message.id
-                ? element
-                : (element as types.FileMessage).copyWith(isLoading: true);
-          }).toList();
-          emit(
-            ChatFetchMessagesSuccess(
-              loadingMessageList,
-              state.room,
-              state.senderId,
-            ),
-          );
+          final loadingMessageList =
+              _updateMessageLoadingState(state.messages, message.id, true);
+
+          emit(fetchSuccessState(loadingMessageList));
         },
         onLoadedCallback: () {
-          final loadedMessageList = messageList.map((element) {
-            return element.id != message.id
-                ? element
-                : (element as types.FileMessage).copyWith(isLoading: false);
-          }).toList();
-          emit(
-            ChatFetchMessagesSuccess(
-              loadedMessageList,
-              state.room,
-              state.senderId,
-            ),
-          );
+          final loadedMessageList =
+              _updateMessageLoadingState(state.messages, message.id, false);
+
+          emit(fetchSuccessState(loadedMessageList));
         },
       );
+
       if (event.shouldOpen) await _openFileUseCase(messageId);
     } catch (error) {
       log('ChatFileLoadFailure: $error');
-      emit(ChatFileLoadFailure(messageList, state.room, state.senderId));
+      emit(ChatFileLoadFailure(state.messages, state.room, state.senderId));
     }
   }
 
@@ -360,5 +335,27 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
         state.senderId,
       ),
     );
+  }
+
+  /// Returns either 'uuid' from [message] metadata or its name.
+  String _getMessageId(types.FileMessage message, ChatFileLoadRequested event) {
+    final uuid = message.metadata?['uuid'] as String?;
+    final messageName = message.name;
+    return uuid != null ? '$uuid${extension(messageName)}' : messageName;
+  }
+
+  /// Updates message with [messageId] isLoading property to [isLoading].
+  ///
+  /// Works only with [types.FileMessage].
+  List<types.Message> _updateMessageLoadingState(
+    List<types.Message> messageList,
+    String messageId,
+    bool isLoading,
+  ) {
+    return messageList.map((element) {
+      return element.id != messageId
+          ? element
+          : (element as types.FileMessage).copyWith(isLoading: isLoading);
+    }).toList();
   }
 }
