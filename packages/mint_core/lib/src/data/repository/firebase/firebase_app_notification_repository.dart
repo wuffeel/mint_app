@@ -1,0 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:injectable/injectable.dart';
+
+import '../../../../mint_module.dart';
+import '../../model/notification_model_dto/notification_model_dto.dart';
+import '../abstract/app_notification_repository.dart';
+
+@lazySingleton
+class FirebaseAppNotificationRepository implements AppNotificationRepository {
+  FirebaseAppNotificationRepository(this._firebaseInitializer);
+
+  final FirebaseInitializer _firebaseInitializer;
+
+  static const _usersCollection = 'users';
+  static const _userNotificationsCollection = 'notifications';
+
+  Future<CollectionReference<Map<String, dynamic>>>
+      _userNotificationsCollectionRef(String userId) async {
+    return (await _firebaseInitializer.firestore)
+        .collection(_usersCollection)
+        .doc(userId)
+        .collection(_userNotificationsCollection);
+  }
+
+  @override
+  Future<Stream<List<NotificationModelDto>>> getAppNotificationStream(
+    String userId,
+  ) async {
+    final userNotificationsCollection =
+        await _userNotificationsCollectionRef(userId);
+
+    return userNotificationsCollection.snapshots().asyncMap((snap) {
+      return snap.docs
+          .map(
+            (notification) => NotificationModelDto.fromJsonWithId(
+              notification.data(),
+              notification.id,
+            ),
+          )
+          .toList();
+    });
+  }
+
+  @override
+  Future<void> clearNotifications(String userId) {
+    // TODO: implement clearNotifications
+    throw UnimplementedError();
+  }
+}

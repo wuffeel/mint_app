@@ -7,6 +7,7 @@ export 'src/data/model/specialist_work_info_dto/specialist_work_info_dto.dart';
 export 'src/data/model/user_model_dto/user_model_dto.dart';
 export 'src/data/model/work_day_period/work_day_period.dart';
 export 'src/domain/entity/file_data.dart';
+export 'src/domain/entity/notification_model/notification_model.dart';
 export 'src/domain/entity/specialist_model/specialist_model.dart';
 export 'src/domain/entity/specialist_work_info/specialist_work_info.dart';
 export 'src/domain/entity/user_model/user_model.dart';
