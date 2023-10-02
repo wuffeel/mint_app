@@ -6,11 +6,12 @@ import 'package:flutter_chat_types/flutter_chat_types.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
+import '../../../mint_core.dart';
 import '../../domain/controller/user_controller.dart';
-import '../../domain/entity/notification_model/notification_model.dart';
-import '../../domain/entity/user_model/user_model.dart';
+import '../../domain/use_case/clear_app_notifications_use_case.dart';
 import '../../domain/use_case/fetch_chat_room_use_case.dart';
 import '../../domain/use_case/get_app_notification_stream_use_case.dart';
+import '../../domain/use_case/mark_app_notification_as_read_use_case.dart';
 
 part 'app_notifications_event.dart';
 
@@ -21,6 +22,8 @@ class AppNotificationsBlocBase extends AppNotificationsBloc<UserModel?> {
   AppNotificationsBlocBase(
     super.getAppNotificationStreamUseCase,
     super.fetchChatRoomUseCase,
+    super.markAppNotificationAsReadUseCase,
+    super.clearAppNotificationsUseCase,
     super.userController,
   );
 }
@@ -30,15 +33,21 @@ class AppNotificationsBloc<T extends UserModel?>
   AppNotificationsBloc(
     this._getAppNotificationStreamUseCase,
     this._fetchChatRoomUseCase,
+    this._markAppNotificationAsReadUseCase,
+    this._clearAppNotificationsUseCase,
     this._userController,
-  ) : super(AppNotificationsInitial()) {
+  ) : super(const AppNotificationsState()) {
     _subscribeToUserChange();
     on<AppNotificationsInitializeRequested>(_onInitializeAppNotifications);
     on<AppNotificationsFetchChatRoomRequested>(_onFetchChatRoom);
+    on<AppNotificationsMarkAsReadRequested>(_onMarkNotificationAsRead);
+    on<AppNotificationsClearRequested>(_onClearNotifications);
   }
 
   final GetAppNotificationStreamUseCase _getAppNotificationStreamUseCase;
   final FetchChatRoomUseCase _fetchChatRoomUseCase;
+  final MarkAppNotificationAsReadUseCase _markAppNotificationAsReadUseCase;
+  final ClearAppNotificationsUseCase _clearAppNotificationsUseCase;
 
   T? _currentUser;
   final UserController<T?> _userController;
@@ -47,9 +56,7 @@ class AppNotificationsBloc<T extends UserModel?>
   void _subscribeToUserChange() {
     _userSubscription = _userController.user.listen((user) {
       _currentUser = user;
-      if (state is AppNotificationsInitial) {
-        add(AppNotificationsInitializeRequested());
-      }
+      if (!state.isInitialized) add(AppNotificationsInitializeRequested());
     });
   }
 
@@ -73,6 +80,7 @@ class AppNotificationsBloc<T extends UserModel?>
           final previousNotifications = <NotificationModel>[];
           final now = DateTime.now();
           final today = DateTime(now.year, now.month, now.day);
+          notificationList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
           for (final notification in notificationList) {
             if (notification.createdAt.isBefore(today)) {
               previousNotifications.add(notification);
@@ -80,9 +88,20 @@ class AppNotificationsBloc<T extends UserModel?>
               todayNotifications.add(notification);
             }
           }
-          return AppNotificationsFetchSuccess(
-            todayNotifications,
-            previousNotifications,
+          final unreadNotificationCount = todayNotifications
+                  .where((e) => e.status == AppNotificationStatus.delivered)
+                  .length +
+              previousNotifications
+                  .where((e) => e.status == AppNotificationStatus.delivered)
+                  .length;
+
+          final state = this.state;
+          return AppNotificationsState(
+            todayNotifications: todayNotifications,
+            previousNotifications: previousNotifications,
+            unreadNotificationCount: unreadNotificationCount,
+            loadingMessageId: state.loadingMessageId,
+            isInitialized: state.isInitialized,
           );
         },
       );
@@ -97,25 +116,74 @@ class AppNotificationsBloc<T extends UserModel?>
     Emitter<AppNotificationsState> emit,
   ) async {
     final user = _currentUser;
-    final state = this.state;
-    if (user == null || state is! AppNotificationsFetchSuccess) return;
+    if (user == null) return;
 
     try {
-      final loadingState = AppNotificationsMessageLoading(
-        state.todayNotifications,
-        state.previousNotifications,
-        event.notificationId,
-      );
-      emit(loadingState);
+      emit(state.copyWith(loadingMessageId: event.notificationId));
       final room = await _fetchChatRoomUseCase(event.roomId);
+
       if (room == null) {
-        emit(AppNotificationsFetchChatRoomFailure());
+        emit(_failureState(AppNotificationsFailureEnum.fetchChat));
         return;
       }
-      emit(AppNotificationsFetchChatRoomSuccess(user.id, room));
+
+      emit(
+        AppNotificationsFetchChatRoomSuccess(
+          user.id,
+          room,
+          todayNotifications: state.todayNotifications,
+          previousNotifications: state.previousNotifications,
+          unreadNotificationCount: state.unreadNotificationCount,
+          isInitialized: state.isInitialized,
+        ),
+      );
     } catch (error) {
       log('AppNotificationsFetchChatRoomFailure: $error');
-      emit(AppNotificationsFetchChatRoomFailure());
+      emit(_failureState(AppNotificationsFailureEnum.fetchChat));
     }
   }
+
+  Future<void> _onMarkNotificationAsRead(
+    AppNotificationsMarkAsReadRequested event,
+    Emitter<AppNotificationsState> emit,
+  ) async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    try {
+      await _markAppNotificationAsReadUseCase(user.id, event.notificationId);
+    } catch (error) {
+      log(
+        'AppNotificationsMarkAsReadFailure: [${event.notificationId}], $error',
+      );
+      emit(_failureState(AppNotificationsFailureEnum.markAsRead));
+    }
+  }
+
+  Future<void> _onClearNotifications(
+    AppNotificationsClearRequested event,
+    Emitter<AppNotificationsState> emit,
+  ) async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    try {
+      await _clearAppNotificationsUseCase(user.id);
+    } catch (error) {
+      log('AppNotificationsClearFailure: $error');
+      emit(_failureState(AppNotificationsFailureEnum.clear));
+    }
+  }
+
+  AppNotificationsFailure _failureState(
+    AppNotificationsFailureEnum failureState,
+  ) =>
+      AppNotificationsFailure(
+        failureState,
+        todayNotifications: state.todayNotifications,
+        previousNotifications: state.previousNotifications,
+        unreadNotificationCount: state.unreadNotificationCount,
+        loadingMessageId: state.loadingMessageId,
+        isInitialized: state.isInitialized,
+      );
 }

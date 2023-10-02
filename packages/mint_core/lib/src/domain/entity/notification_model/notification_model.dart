@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../../backbone/app_notification_status.dart';
+
 part 'notification_model.freezed.dart';
 
 abstract class INotificationModel {
@@ -13,6 +15,8 @@ abstract class INotificationModel {
   String? get lastName;
 
   String? get photoUrl;
+
+  AppNotificationStatus? get status;
 }
 
 @freezed
@@ -25,6 +29,7 @@ sealed class NotificationModel with _$NotificationModel {
     String? firstName,
     String? lastName,
     String? photoUrl,
+    AppNotificationStatus? status,
   }) = ChatNotification;
 
   @Implements<INotificationModel>()
@@ -36,5 +41,6 @@ sealed class NotificationModel with _$NotificationModel {
     String? firstName,
     String? lastName,
     String? photoUrl,
+    AppNotificationStatus? status,
   }) = BookingNotification;
 }

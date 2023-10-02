@@ -5,5 +5,7 @@ abstract class AppNotificationRepository {
     String userId,
   );
 
-  Future<void> clearNotifications(String userId);
+  Future<void> markAppNotificationAsRead(String userId, String notificationId);
+
+  Future<void> clearAppNotifications(String userId);
 }

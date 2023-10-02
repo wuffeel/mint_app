@@ -1,6 +1,7 @@
 /// A library of common tools for Mint project
 library mint_core;
 
+export 'src/backbone/app_notification_status.dart';
 export 'src/backbone/user_type.dart';
 export 'src/data/model/specialist_model_dto/specialist_model_dto.dart';
 export 'src/data/model/specialist_work_info_dto/specialist_work_info_dto.dart';

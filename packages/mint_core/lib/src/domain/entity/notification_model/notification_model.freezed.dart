@@ -21,10 +21,17 @@ mixin _$NotificationModel {
   String? get firstName => throw _privateConstructorUsedError;
   String? get lastName => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
+  AppNotificationStatus? get status => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)
+    required TResult Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)
         chat,
     required TResult Function(
             String id,
@@ -33,14 +40,21 @@ mixin _$NotificationModel {
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         booking,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)?
+    TResult? Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult? Function(
             String id,
@@ -49,14 +63,21 @@ mixin _$NotificationModel {
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)?
+    TResult Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult Function(
             String id,
@@ -65,7 +86,8 @@ mixin _$NotificationModel {
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
     required TResult orElse(),
   }) =>
@@ -106,7 +128,8 @@ abstract class $NotificationModelCopyWith<$Res> {
       DateTime createdAt,
       String? firstName,
       String? lastName,
-      String? photoUrl});
+      String? photoUrl,
+      AppNotificationStatus? status});
 }
 
 /// @nodoc
@@ -127,6 +150,7 @@ class _$NotificationModelCopyWithImpl<$Res, $Val extends NotificationModel>
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? photoUrl = freezed,
+    Object? status = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -149,6 +173,10 @@ class _$NotificationModelCopyWithImpl<$Res, $Val extends NotificationModel>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppNotificationStatus?,
     ) as $Val);
   }
 }
@@ -167,7 +195,8 @@ abstract class _$$ChatNotificationCopyWith<$Res>
       String roomId,
       String? firstName,
       String? lastName,
-      String? photoUrl});
+      String? photoUrl,
+      AppNotificationStatus? status});
 }
 
 /// @nodoc
@@ -187,6 +216,7 @@ class __$$ChatNotificationCopyWithImpl<$Res>
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? photoUrl = freezed,
+    Object? status = freezed,
   }) {
     return _then(_$ChatNotification(
       id: null == id
@@ -213,6 +243,10 @@ class __$$ChatNotificationCopyWithImpl<$Res>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppNotificationStatus?,
     ));
   }
 }
@@ -228,7 +262,8 @@ class _$ChatNotification
       required this.roomId,
       this.firstName,
       this.lastName,
-      this.photoUrl});
+      this.photoUrl,
+      this.status});
 
   @override
   final String id;
@@ -242,10 +277,12 @@ class _$ChatNotification
   final String? lastName;
   @override
   final String? photoUrl;
+  @override
+  final AppNotificationStatus? status;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationModel.chat(id: $id, createdAt: $createdAt, roomId: $roomId, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl)';
+    return 'NotificationModel.chat(id: $id, createdAt: $createdAt, roomId: $roomId, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl, status: $status)';
   }
 
   @override
@@ -258,7 +295,8 @@ class _$ChatNotification
       ..add(DiagnosticsProperty('roomId', roomId))
       ..add(DiagnosticsProperty('firstName', firstName))
       ..add(DiagnosticsProperty('lastName', lastName))
-      ..add(DiagnosticsProperty('photoUrl', photoUrl));
+      ..add(DiagnosticsProperty('photoUrl', photoUrl))
+      ..add(DiagnosticsProperty('status', status));
   }
 
   @override
@@ -275,12 +313,13 @@ class _$ChatNotification
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
             (identical(other.photoUrl, photoUrl) ||
-                other.photoUrl == photoUrl));
+                other.photoUrl == photoUrl) &&
+            (identical(other.status, status) || other.status == status));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, createdAt, roomId, firstName, lastName, photoUrl);
+  int get hashCode => Object.hash(runtimeType, id, createdAt, roomId, firstName,
+      lastName, photoUrl, status);
 
   @JsonKey(ignore: true)
   @override
@@ -291,8 +330,14 @@ class _$ChatNotification
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)
+    required TResult Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)
         chat,
     required TResult Function(
             String id,
@@ -301,17 +346,24 @@ class _$ChatNotification
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         booking,
   }) {
-    return chat(id, createdAt, roomId, firstName, lastName, photoUrl);
+    return chat(id, createdAt, roomId, firstName, lastName, photoUrl, status);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)?
+    TResult? Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult? Function(
             String id,
@@ -320,17 +372,25 @@ class _$ChatNotification
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
   }) {
-    return chat?.call(id, createdAt, roomId, firstName, lastName, photoUrl);
+    return chat?.call(
+        id, createdAt, roomId, firstName, lastName, photoUrl, status);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)?
+    TResult Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult Function(
             String id,
@@ -339,12 +399,13 @@ class _$ChatNotification
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
     required TResult orElse(),
   }) {
     if (chat != null) {
-      return chat(id, createdAt, roomId, firstName, lastName, photoUrl);
+      return chat(id, createdAt, roomId, firstName, lastName, photoUrl, status);
     }
     return orElse();
   }
@@ -389,7 +450,8 @@ abstract class ChatNotification
       required final String roomId,
       final String? firstName,
       final String? lastName,
-      final String? photoUrl}) = _$ChatNotification;
+      final String? photoUrl,
+      final AppNotificationStatus? status}) = _$ChatNotification;
 
   @override
   String get id;
@@ -402,6 +464,8 @@ abstract class ChatNotification
   String? get lastName;
   @override
   String? get photoUrl;
+  @override
+  AppNotificationStatus? get status;
   @override
   @JsonKey(ignore: true)
   _$$ChatNotificationCopyWith<_$ChatNotification> get copyWith =>
@@ -423,7 +487,8 @@ abstract class _$$BookingNotificationCopyWith<$Res>
       DateTime bookTime,
       String? firstName,
       String? lastName,
-      String? photoUrl});
+      String? photoUrl,
+      AppNotificationStatus? status});
 }
 
 /// @nodoc
@@ -444,6 +509,7 @@ class __$$BookingNotificationCopyWithImpl<$Res>
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? photoUrl = freezed,
+    Object? status = freezed,
   }) {
     return _then(_$BookingNotification(
       id: null == id
@@ -474,6 +540,10 @@ class __$$BookingNotificationCopyWithImpl<$Res>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppNotificationStatus?,
     ));
   }
 }
@@ -490,7 +560,8 @@ class _$BookingNotification
       required this.bookTime,
       this.firstName,
       this.lastName,
-      this.photoUrl});
+      this.photoUrl,
+      this.status});
 
   @override
   final String id;
@@ -506,10 +577,12 @@ class _$BookingNotification
   final String? lastName;
   @override
   final String? photoUrl;
+  @override
+  final AppNotificationStatus? status;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationModel.booking(id: $id, createdAt: $createdAt, bookingId: $bookingId, bookTime: $bookTime, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl)';
+    return 'NotificationModel.booking(id: $id, createdAt: $createdAt, bookingId: $bookingId, bookTime: $bookTime, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl, status: $status)';
   }
 
   @override
@@ -523,7 +596,8 @@ class _$BookingNotification
       ..add(DiagnosticsProperty('bookTime', bookTime))
       ..add(DiagnosticsProperty('firstName', firstName))
       ..add(DiagnosticsProperty('lastName', lastName))
-      ..add(DiagnosticsProperty('photoUrl', photoUrl));
+      ..add(DiagnosticsProperty('photoUrl', photoUrl))
+      ..add(DiagnosticsProperty('status', status));
   }
 
   @override
@@ -543,12 +617,13 @@ class _$BookingNotification
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
             (identical(other.photoUrl, photoUrl) ||
-                other.photoUrl == photoUrl));
+                other.photoUrl == photoUrl) &&
+            (identical(other.status, status) || other.status == status));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, id, createdAt, bookingId,
-      bookTime, firstName, lastName, photoUrl);
+      bookTime, firstName, lastName, photoUrl, status);
 
   @JsonKey(ignore: true)
   @override
@@ -560,8 +635,14 @@ class _$BookingNotification
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
-    required TResult Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)
+    required TResult Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)
         chat,
     required TResult Function(
             String id,
@@ -570,18 +651,25 @@ class _$BookingNotification
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         booking,
   }) {
-    return booking(
-        id, createdAt, bookingId, bookTime, firstName, lastName, photoUrl);
+    return booking(id, createdAt, bookingId, bookTime, firstName, lastName,
+        photoUrl, status);
   }
 
   @override
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)?
+    TResult? Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult? Function(
             String id,
@@ -590,18 +678,25 @@ class _$BookingNotification
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
   }) {
-    return booking?.call(
-        id, createdAt, bookingId, bookTime, firstName, lastName, photoUrl);
+    return booking?.call(id, createdAt, bookingId, bookTime, firstName,
+        lastName, photoUrl, status);
   }
 
   @override
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
-    TResult Function(String id, DateTime createdAt, String roomId,
-            String? firstName, String? lastName, String? photoUrl)?
+    TResult Function(
+            String id,
+            DateTime createdAt,
+            String roomId,
+            String? firstName,
+            String? lastName,
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult Function(
             String id,
@@ -610,13 +705,14 @@ class _$BookingNotification
             DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
     required TResult orElse(),
   }) {
     if (booking != null) {
-      return booking(
-          id, createdAt, bookingId, bookTime, firstName, lastName, photoUrl);
+      return booking(id, createdAt, bookingId, bookTime, firstName, lastName,
+          photoUrl, status);
     }
     return orElse();
   }
@@ -662,7 +758,8 @@ abstract class BookingNotification
       required final DateTime bookTime,
       final String? firstName,
       final String? lastName,
-      final String? photoUrl}) = _$BookingNotification;
+      final String? photoUrl,
+      final AppNotificationStatus? status}) = _$BookingNotification;
 
   @override
   String get id;
@@ -676,6 +773,8 @@ abstract class BookingNotification
   String? get lastName;
   @override
   String? get photoUrl;
+  @override
+  AppNotificationStatus? get status;
   @override
   @JsonKey(ignore: true)
   _$$BookingNotificationCopyWith<_$BookingNotification> get copyWith =>

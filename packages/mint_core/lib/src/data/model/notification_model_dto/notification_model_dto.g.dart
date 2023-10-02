@@ -14,6 +14,8 @@ _$ChatNotificationDto _$$ChatNotificationDtoFromJson(Map json) =>
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       photoUrl: json['photoUrl'] as String?,
+      status:
+          $enumDecodeNullable(_$AppNotificationStatusEnumMap, json['status']),
       $type: json['type'] as String?,
     );
 
@@ -26,8 +28,15 @@ Map<String, dynamic> _$$ChatNotificationDtoToJson(
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'photoUrl': instance.photoUrl,
+      'status': _$AppNotificationStatusEnumMap[instance.status],
       'type': instance.$type,
     };
+
+const _$AppNotificationStatusEnumMap = {
+  AppNotificationStatus.delivered: 'delivered',
+  AppNotificationStatus.seen: 'seen',
+  AppNotificationStatus.cleared: 'cleared',
+};
 
 _$BookingNotificationDto _$$BookingNotificationDtoFromJson(Map json) =>
     _$BookingNotificationDto(
@@ -38,6 +47,8 @@ _$BookingNotificationDto _$$BookingNotificationDtoFromJson(Map json) =>
       firstName: json['firstName'] as String?,
       lastName: json['lastName'] as String?,
       photoUrl: json['photoUrl'] as String?,
+      status:
+          $enumDecodeNullable(_$AppNotificationStatusEnumMap, json['status']),
       $type: json['type'] as String?,
     );
 
@@ -51,5 +62,6 @@ Map<String, dynamic> _$$BookingNotificationDtoToJson(
       'firstName': instance.firstName,
       'lastName': instance.lastName,
       'photoUrl': instance.photoUrl,
+      'status': _$AppNotificationStatusEnumMap[instance.status],
       'type': instance.$type,
     };

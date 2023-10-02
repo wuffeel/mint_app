@@ -17,6 +17,7 @@ class NotificationModelFromDto
         firstName: param.firstName,
         lastName: param.lastName,
         photoUrl: param.photoUrl,
+        status: param.status,
       );
     } else if (param is BookingNotificationDto) {
       return BookingNotification(
@@ -27,6 +28,7 @@ class NotificationModelFromDto
         firstName: param.firstName,
         lastName: param.lastName,
         photoUrl: param.photoUrl,
+        status: param.status,
       );
     }
     return null;

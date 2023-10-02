@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import '../../../../mint_utils.dart';
+import '../../../backbone/app_notification_status.dart';
 
 part 'notification_model_dto.freezed.dart';
 
@@ -17,6 +18,8 @@ abstract class INotificationModelDto {
   String? get lastName;
 
   String? get photoUrl;
+
+  AppNotificationStatus? get status;
 }
 
 @Freezed(fromJson: true, toJson: true, unionKey: 'type')
@@ -29,6 +32,7 @@ sealed class NotificationModelDto with _$NotificationModelDto {
     String? firstName,
     String? lastName,
     String? photoUrl,
+    AppNotificationStatus? status,
   }) = ChatNotificationDto;
 
   @Implements<INotificationModelDto>()
@@ -40,6 +44,7 @@ sealed class NotificationModelDto with _$NotificationModelDto {
     String? firstName,
     String? lastName,
     String? photoUrl,
+    AppNotificationStatus? status,
   }) = BookingNotificationDto;
 
   factory NotificationModelDto.fromJson(Map<String, dynamic> json) =>

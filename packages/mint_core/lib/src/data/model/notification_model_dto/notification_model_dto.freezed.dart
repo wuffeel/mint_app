@@ -35,6 +35,7 @@ mixin _$NotificationModelDto {
   String? get firstName => throw _privateConstructorUsedError;
   String? get lastName => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
+  AppNotificationStatus? get status => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(
@@ -43,7 +44,8 @@ mixin _$NotificationModelDto {
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         chat,
     required TResult Function(
             String id,
@@ -52,7 +54,8 @@ mixin _$NotificationModelDto {
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         booking,
   }) =>
       throw _privateConstructorUsedError;
@@ -64,7 +67,8 @@ mixin _$NotificationModelDto {
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult? Function(
             String id,
@@ -73,7 +77,8 @@ mixin _$NotificationModelDto {
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
   }) =>
       throw _privateConstructorUsedError;
@@ -85,7 +90,8 @@ mixin _$NotificationModelDto {
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult Function(
             String id,
@@ -94,7 +100,8 @@ mixin _$NotificationModelDto {
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
     required TResult orElse(),
   }) =>
@@ -135,7 +142,8 @@ abstract class $NotificationModelDtoCopyWith<$Res> {
       @DateTimeConverter() DateTime createdAt,
       String? firstName,
       String? lastName,
-      String? photoUrl});
+      String? photoUrl,
+      AppNotificationStatus? status});
 }
 
 /// @nodoc
@@ -157,6 +165,7 @@ class _$NotificationModelDtoCopyWithImpl<$Res,
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? photoUrl = freezed,
+    Object? status = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -179,6 +188,10 @@ class _$NotificationModelDtoCopyWithImpl<$Res,
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppNotificationStatus?,
     ) as $Val);
   }
 }
@@ -197,7 +210,8 @@ abstract class _$$ChatNotificationDtoCopyWith<$Res>
       String roomId,
       String? firstName,
       String? lastName,
-      String? photoUrl});
+      String? photoUrl,
+      AppNotificationStatus? status});
 }
 
 /// @nodoc
@@ -217,6 +231,7 @@ class __$$ChatNotificationDtoCopyWithImpl<$Res>
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? photoUrl = freezed,
+    Object? status = freezed,
   }) {
     return _then(_$ChatNotificationDto(
       id: null == id
@@ -243,6 +258,10 @@ class __$$ChatNotificationDtoCopyWithImpl<$Res>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppNotificationStatus?,
     ));
   }
 }
@@ -259,6 +278,7 @@ class _$ChatNotificationDto
       this.firstName,
       this.lastName,
       this.photoUrl,
+      this.status,
       final String? $type})
       : $type = $type ?? 'chat';
 
@@ -278,13 +298,15 @@ class _$ChatNotificationDto
   final String? lastName;
   @override
   final String? photoUrl;
+  @override
+  final AppNotificationStatus? status;
 
   @JsonKey(name: 'type')
   final String $type;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationModelDto.chat(id: $id, createdAt: $createdAt, roomId: $roomId, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl)';
+    return 'NotificationModelDto.chat(id: $id, createdAt: $createdAt, roomId: $roomId, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl, status: $status)';
   }
 
   @override
@@ -297,7 +319,8 @@ class _$ChatNotificationDto
       ..add(DiagnosticsProperty('roomId', roomId))
       ..add(DiagnosticsProperty('firstName', firstName))
       ..add(DiagnosticsProperty('lastName', lastName))
-      ..add(DiagnosticsProperty('photoUrl', photoUrl));
+      ..add(DiagnosticsProperty('photoUrl', photoUrl))
+      ..add(DiagnosticsProperty('status', status));
   }
 
   @override
@@ -314,13 +337,14 @@ class _$ChatNotificationDto
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
             (identical(other.photoUrl, photoUrl) ||
-                other.photoUrl == photoUrl));
+                other.photoUrl == photoUrl) &&
+            (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(
-      runtimeType, id, createdAt, roomId, firstName, lastName, photoUrl);
+  int get hashCode => Object.hash(runtimeType, id, createdAt, roomId, firstName,
+      lastName, photoUrl, status);
 
   @JsonKey(ignore: true)
   @override
@@ -338,7 +362,8 @@ class _$ChatNotificationDto
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         chat,
     required TResult Function(
             String id,
@@ -347,10 +372,11 @@ class _$ChatNotificationDto
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         booking,
   }) {
-    return chat(id, createdAt, roomId, firstName, lastName, photoUrl);
+    return chat(id, createdAt, roomId, firstName, lastName, photoUrl, status);
   }
 
   @override
@@ -362,7 +388,8 @@ class _$ChatNotificationDto
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult? Function(
             String id,
@@ -371,10 +398,12 @@ class _$ChatNotificationDto
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
   }) {
-    return chat?.call(id, createdAt, roomId, firstName, lastName, photoUrl);
+    return chat?.call(
+        id, createdAt, roomId, firstName, lastName, photoUrl, status);
   }
 
   @override
@@ -386,7 +415,8 @@ class _$ChatNotificationDto
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult Function(
             String id,
@@ -395,12 +425,13 @@ class _$ChatNotificationDto
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
     required TResult orElse(),
   }) {
     if (chat != null) {
-      return chat(id, createdAt, roomId, firstName, lastName, photoUrl);
+      return chat(id, createdAt, roomId, firstName, lastName, photoUrl, status);
     }
     return orElse();
   }
@@ -452,7 +483,8 @@ abstract class ChatNotificationDto
       required final String roomId,
       final String? firstName,
       final String? lastName,
-      final String? photoUrl}) = _$ChatNotificationDto;
+      final String? photoUrl,
+      final AppNotificationStatus? status}) = _$ChatNotificationDto;
 
   factory ChatNotificationDto.fromJson(Map<String, dynamic> json) =
       _$ChatNotificationDto.fromJson;
@@ -469,6 +501,8 @@ abstract class ChatNotificationDto
   String? get lastName;
   @override
   String? get photoUrl;
+  @override
+  AppNotificationStatus? get status;
   @override
   @JsonKey(ignore: true)
   _$$ChatNotificationDtoCopyWith<_$ChatNotificationDto> get copyWith =>
@@ -490,7 +524,8 @@ abstract class _$$BookingNotificationDtoCopyWith<$Res>
       @DateTimeConverter() DateTime bookTime,
       String? firstName,
       String? lastName,
-      String? photoUrl});
+      String? photoUrl,
+      AppNotificationStatus? status});
 }
 
 /// @nodoc
@@ -511,6 +546,7 @@ class __$$BookingNotificationDtoCopyWithImpl<$Res>
     Object? firstName = freezed,
     Object? lastName = freezed,
     Object? photoUrl = freezed,
+    Object? status = freezed,
   }) {
     return _then(_$BookingNotificationDto(
       id: null == id
@@ -541,6 +577,10 @@ class __$$BookingNotificationDtoCopyWithImpl<$Res>
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      status: freezed == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as AppNotificationStatus?,
     ));
   }
 }
@@ -558,6 +598,7 @@ class _$BookingNotificationDto
       this.firstName,
       this.lastName,
       this.photoUrl,
+      this.status,
       final String? $type})
       : $type = $type ?? 'booking';
 
@@ -580,13 +621,15 @@ class _$BookingNotificationDto
   final String? lastName;
   @override
   final String? photoUrl;
+  @override
+  final AppNotificationStatus? status;
 
   @JsonKey(name: 'type')
   final String $type;
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'NotificationModelDto.booking(id: $id, createdAt: $createdAt, bookingId: $bookingId, bookTime: $bookTime, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl)';
+    return 'NotificationModelDto.booking(id: $id, createdAt: $createdAt, bookingId: $bookingId, bookTime: $bookTime, firstName: $firstName, lastName: $lastName, photoUrl: $photoUrl, status: $status)';
   }
 
   @override
@@ -600,7 +643,8 @@ class _$BookingNotificationDto
       ..add(DiagnosticsProperty('bookTime', bookTime))
       ..add(DiagnosticsProperty('firstName', firstName))
       ..add(DiagnosticsProperty('lastName', lastName))
-      ..add(DiagnosticsProperty('photoUrl', photoUrl));
+      ..add(DiagnosticsProperty('photoUrl', photoUrl))
+      ..add(DiagnosticsProperty('status', status));
   }
 
   @override
@@ -620,13 +664,14 @@ class _$BookingNotificationDto
             (identical(other.lastName, lastName) ||
                 other.lastName == lastName) &&
             (identical(other.photoUrl, photoUrl) ||
-                other.photoUrl == photoUrl));
+                other.photoUrl == photoUrl) &&
+            (identical(other.status, status) || other.status == status));
   }
 
   @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(runtimeType, id, createdAt, bookingId,
-      bookTime, firstName, lastName, photoUrl);
+      bookTime, firstName, lastName, photoUrl, status);
 
   @JsonKey(ignore: true)
   @override
@@ -644,7 +689,8 @@ class _$BookingNotificationDto
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         chat,
     required TResult Function(
             String id,
@@ -653,11 +699,12 @@ class _$BookingNotificationDto
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)
+            String? photoUrl,
+            AppNotificationStatus? status)
         booking,
   }) {
-    return booking(
-        id, createdAt, bookingId, bookTime, firstName, lastName, photoUrl);
+    return booking(id, createdAt, bookingId, bookTime, firstName, lastName,
+        photoUrl, status);
   }
 
   @override
@@ -669,7 +716,8 @@ class _$BookingNotificationDto
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult? Function(
             String id,
@@ -678,11 +726,12 @@ class _$BookingNotificationDto
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
   }) {
-    return booking?.call(
-        id, createdAt, bookingId, bookTime, firstName, lastName, photoUrl);
+    return booking?.call(id, createdAt, bookingId, bookTime, firstName,
+        lastName, photoUrl, status);
   }
 
   @override
@@ -694,7 +743,8 @@ class _$BookingNotificationDto
             String roomId,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         chat,
     TResult Function(
             String id,
@@ -703,13 +753,14 @@ class _$BookingNotificationDto
             @DateTimeConverter() DateTime bookTime,
             String? firstName,
             String? lastName,
-            String? photoUrl)?
+            String? photoUrl,
+            AppNotificationStatus? status)?
         booking,
     required TResult orElse(),
   }) {
     if (booking != null) {
-      return booking(
-          id, createdAt, bookingId, bookTime, firstName, lastName, photoUrl);
+      return booking(id, createdAt, bookingId, bookTime, firstName, lastName,
+          photoUrl, status);
     }
     return orElse();
   }
@@ -762,7 +813,8 @@ abstract class BookingNotificationDto
       @DateTimeConverter() required final DateTime bookTime,
       final String? firstName,
       final String? lastName,
-      final String? photoUrl}) = _$BookingNotificationDto;
+      final String? photoUrl,
+      final AppNotificationStatus? status}) = _$BookingNotificationDto;
 
   factory BookingNotificationDto.fromJson(Map<String, dynamic> json) =
       _$BookingNotificationDto.fromJson;
@@ -781,6 +833,8 @@ abstract class BookingNotificationDto
   String? get lastName;
   @override
   String? get photoUrl;
+  @override
+  AppNotificationStatus? get status;
   @override
   @JsonKey(ignore: true)
   _$$BookingNotificationDtoCopyWith<_$BookingNotificationDto> get copyWith =>

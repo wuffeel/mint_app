@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../../../mint_module.dart';
+import '../../../backbone/app_notification_status.dart';
 import '../../model/notification_model_dto/notification_model_dto.dart';
 import '../abstract/app_notification_repository.dart';
 
@@ -29,7 +30,13 @@ class FirebaseAppNotificationRepository implements AppNotificationRepository {
     final userNotificationsCollection =
         await _userNotificationsCollectionRef(userId);
 
-    return userNotificationsCollection.snapshots().asyncMap((snap) {
+    // Important: 'status' field should exist. Documents without 'status' won't
+    // be fetched.
+    // https://firebase.google.com/docs/firestore/query-data/queries?hl=en#not_equal_
+    return userNotificationsCollection
+        .where('status', isNotEqualTo: AppNotificationStatus.cleared.name)
+        .snapshots()
+        .asyncMap((snap) {
       return snap.docs
           .map(
             (notification) => NotificationModelDto.fromJsonWithId(
@@ -42,8 +49,39 @@ class FirebaseAppNotificationRepository implements AppNotificationRepository {
   }
 
   @override
-  Future<void> clearNotifications(String userId) {
-    // TODO: implement clearNotifications
-    throw UnimplementedError();
+  Future<void> markAppNotificationAsRead(
+    String userId,
+    String notificationId,
+  ) async {
+    final userNotificationsCollection =
+        await _userNotificationsCollectionRef(userId);
+
+    return userNotificationsCollection.doc(notificationId).update({
+      'status': AppNotificationStatus.seen.name,
+    });
+  }
+
+  @override
+  Future<void> clearAppNotifications(String userId) async {
+    final firestore = await _firebaseInitializer.firestore;
+
+    final userNotificationsCollection =
+        await _userNotificationsCollectionRef(userId);
+
+    final batch = firestore.batch();
+
+    final querySnapshot = await userNotificationsCollection
+        .where('status', isNotEqualTo: AppNotificationStatus.cleared.name)
+        .get();
+
+    for (final snap in querySnapshot.docs) {
+      final docReference = snap.reference;
+
+      final newData = {'status': AppNotificationStatus.cleared.name};
+
+      batch.update(docReference, newData);
+    }
+
+    await batch.commit();
   }
 }

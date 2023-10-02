@@ -11,3 +11,11 @@ class AppNotificationsFetchChatRoomRequested extends AppNotificationsEvent {
   final String notificationId;
   final String roomId;
 }
+
+class AppNotificationsMarkAsReadRequested extends AppNotificationsEvent {
+  AppNotificationsMarkAsReadRequested(this.notificationId);
+
+  final String notificationId;
+}
+
+class AppNotificationsClearRequested extends AppNotificationsEvent {}

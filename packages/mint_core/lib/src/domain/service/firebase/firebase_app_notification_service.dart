@@ -34,8 +34,15 @@ class FirebaseAppNotificationService implements AppNotificationService {
   }
 
   @override
-  Future<void> clearNotifications(String userId) {
-    // TODO: implement clearNotifications
-    throw UnimplementedError();
+  Future<void> markAppNotificationAsRead(String userId, String notificationId) {
+    return _appNotificationRepository.markAppNotificationAsRead(
+      userId,
+      notificationId,
+    );
+  }
+
+  @override
+  Future<void> clearAppNotifications(String userId) {
+    return _appNotificationRepository.clearAppNotifications(userId);
   }
 }
