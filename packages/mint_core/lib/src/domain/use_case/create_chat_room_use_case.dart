@@ -9,6 +9,6 @@ class CreateChatRoomUseCase {
 
   final ChatService _service;
 
-  Future<Room> call(String userId, String specialistId) =>
-      _service.createRoom(userId, specialistId);
+  Future<Room> call(String userId, String otherUserId) =>
+      _service.createRoom(userId, otherUserId);
 }

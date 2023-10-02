@@ -151,7 +151,7 @@ class ChatBloc<T extends UserModel?> extends Bloc<ChatEvent, ChatState> {
 
     try {
       emit(ChatFetchRoomLoading());
-      final room = await _createChatRoomUseCase(user.id, event.specialistId);
+      final room = await _createChatRoomUseCase(user.id, event.otherUserId);
       emit(ChatFetchRoomSuccess(room, user.id));
     } catch (error) {
       log('ChatFetchRoomFailure: $error');
