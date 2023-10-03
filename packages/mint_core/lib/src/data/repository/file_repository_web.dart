@@ -39,12 +39,11 @@ class FileRepositoryWeb extends FileRepositoryImpl {
     if (bytes == null) return null;
     final base64 = base64Encode(bytes);
 
-    if (fileUri.startsWith('http')) {
-      html.AnchorElement(href: 'data:application/octet-stream;base64,$base64')
-        ..target = 'blank'
-        ..setAttribute('download', fileName)
-        ..click();
-    }
+    html.AnchorElement(href: 'data:application/octet-stream;base64,$base64')
+      ..target = 'blank'
+      ..setAttribute('download', fileName)
+      ..click();
+
     return null;
   }
 
