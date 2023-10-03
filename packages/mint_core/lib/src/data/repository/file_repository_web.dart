@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:typed_data';
 
@@ -16,6 +17,10 @@ import 'file_repository_impl.dart';
 @web
 @LazySingleton(as: FileRepository)
 class FileRepositoryWeb extends FileRepositoryImpl {
+  FileRepositoryWeb(this._firebaseInitializer);
+
+  final FirebaseInitializer _firebaseInitializer;
+
   /// No local files in web, does nothing
   @override
   Future<void> deleteLocalFile(String fileName) async {}
@@ -27,9 +32,17 @@ class FileRepositoryWeb extends FileRepositoryImpl {
     void Function()? onLoadingCallback,
     void Function()? onLoadedCallback,
   }) async {
+    final storage = await _firebaseInitializer.storage;
+
+    final httpReference = storage.refFromURL(fileUri);
+    final bytes = await httpReference.getData();
+    if (bytes == null) return null;
+    final base64 = base64Encode(bytes);
+
     if (fileUri.startsWith('http')) {
-      html.AnchorElement(href: fileUri)
-        ..download = fileName
+      html.AnchorElement(href: 'data:application/octet-stream;base64,$base64')
+        ..target = 'blank'
+        ..setAttribute('download', fileName)
         ..click();
     }
     return null;
