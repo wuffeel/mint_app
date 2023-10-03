@@ -17,6 +17,12 @@ part 'app_notifications_event.dart';
 
 part 'app_notifications_state.dart';
 
+typedef NotificationsData = ({
+  List<NotificationModel> todayNotifications,
+  List<NotificationModel> previousNotifications,
+  int unreadNotificationsCount,
+});
+
 @Injectable(as: AppNotificationsBloc)
 class AppNotificationsBlocBase extends AppNotificationsBloc<UserModel?> {
   AppNotificationsBlocBase(
@@ -76,29 +82,14 @@ class AppNotificationsBloc<T extends UserModel?>
       return emit.forEach(
         await _getAppNotificationStreamUseCase(user.id),
         onData: (notificationList) {
-          final todayNotifications = <NotificationModel>[];
-          final previousNotifications = <NotificationModel>[];
-          final now = DateTime.now();
-          final today = DateTime(now.year, now.month, now.day);
           notificationList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
-          for (final notification in notificationList) {
-            if (notification.createdAt.isBefore(today)) {
-              previousNotifications.add(notification);
-            } else {
-              todayNotifications.add(notification);
-            }
-          }
-          final unreadNotificationCount = todayNotifications
-                  .where((e) => e.status == AppNotificationStatus.delivered)
-                  .length +
-              previousNotifications
-                  .where((e) => e.status == AppNotificationStatus.delivered)
-                  .length;
+
+          final notificationsData = _getNotificationsData(notificationList);
 
           return AppNotificationsState(
-            todayNotifications: todayNotifications,
-            previousNotifications: previousNotifications,
-            unreadNotificationCount: unreadNotificationCount,
+            todayNotifications: notificationsData.todayNotifications,
+            previousNotifications: notificationsData.previousNotifications,
+            unreadNotificationCount: notificationsData.unreadNotificationsCount,
             loadingMessageId: state.loadingMessageId,
             isInitialized: state.isInitialized,
           );
@@ -172,6 +163,35 @@ class AppNotificationsBloc<T extends UserModel?>
       log('AppNotificationsClearFailure: $error');
       emit(_failureState(AppNotificationsFailureEnum.clear));
     }
+  }
+
+  NotificationsData _getNotificationsData(
+    List<NotificationModel> notificationList,
+  ) {
+    final todayNotifications = <NotificationModel>[];
+    final previousNotifications = <NotificationModel>[];
+    var unreadNotificationCount = 0;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+
+    for (final notification in notificationList) {
+      if (notification.createdAt.isBefore(today)) {
+        previousNotifications.add(notification);
+      } else {
+        todayNotifications.add(notification);
+      }
+
+      if (notification.status == AppNotificationStatus.delivered) {
+        unreadNotificationCount++;
+      }
+    }
+
+    return (
+      todayNotifications: todayNotifications,
+      previousNotifications: previousNotifications,
+      unreadNotificationsCount: unreadNotificationCount,
+    );
   }
 
   AppNotificationsFailure _failureState(
