@@ -134,7 +134,7 @@ class FirebaseChatRepository implements ChatRepository {
 
     final query = await messagesRef
         .where('authorId', isEqualTo: otherUserId)
-        .where('status', isNotEqualTo: types.Status.seen.name)
+        .where('status', isEqualTo: types.Status.delivered.name)
         .count()
         .get();
 
