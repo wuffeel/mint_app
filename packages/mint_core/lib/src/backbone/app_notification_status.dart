@@ -1,1 +1,1 @@
-enum AppNotificationStatus { delivered, seen, cleared }
+enum AppNotificationStatus { delivered, seen }

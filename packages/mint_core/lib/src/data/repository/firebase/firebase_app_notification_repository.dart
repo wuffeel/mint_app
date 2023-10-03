@@ -30,13 +30,7 @@ class FirebaseAppNotificationRepository implements AppNotificationRepository {
     final userNotificationsCollection =
         await _userNotificationsCollectionRef(userId);
 
-    // Important: 'status' field should exist. Documents without 'status' won't
-    // be fetched.
-    // https://firebase.google.com/docs/firestore/query-data/queries?hl=en#not_equal_
-    return userNotificationsCollection
-        .where('status', isNotEqualTo: AppNotificationStatus.cleared.name)
-        .snapshots()
-        .asyncMap((snap) {
+    return userNotificationsCollection.snapshots().asyncMap((snap) {
       return snap.docs
           .map(
             (notification) => NotificationModelDto.fromJsonWithId(
@@ -71,13 +65,13 @@ class FirebaseAppNotificationRepository implements AppNotificationRepository {
     final batch = firestore.batch();
 
     final querySnapshot = await userNotificationsCollection
-        .where('status', isNotEqualTo: AppNotificationStatus.cleared.name)
+        .where('status', isEqualTo: AppNotificationStatus.delivered.name)
         .get();
 
     for (final snap in querySnapshot.docs) {
       final docReference = snap.reference;
 
-      final newData = {'status': AppNotificationStatus.cleared.name};
+      final newData = {'status': AppNotificationStatus.seen.name};
 
       batch.update(docReference, newData);
     }

@@ -35,7 +35,6 @@ Map<String, dynamic> _$$ChatNotificationDtoToJson(
 const _$AppNotificationStatusEnumMap = {
   AppNotificationStatus.delivered: 'delivered',
   AppNotificationStatus.seen: 'seen',
-  AppNotificationStatus.cleared: 'cleared',
 };
 
 _$BookingNotificationDto _$$BookingNotificationDtoFromJson(Map json) =>
