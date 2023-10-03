@@ -47,11 +47,10 @@ class AppNotificationsFetchChatRoomSuccess extends AppNotificationsState {
   const AppNotificationsFetchChatRoomSuccess(
     this.senderId,
     this.room, {
-    super.todayNotifications,
-    super.previousNotifications,
-    super.unreadNotificationCount,
-    super.loadingMessageId,
-    super.isInitialized,
+    required super.todayNotifications,
+    required super.previousNotifications,
+    required super.unreadNotificationCount,
+    required super.isInitialized,
   });
 
   final String senderId;
@@ -61,11 +60,11 @@ class AppNotificationsFetchChatRoomSuccess extends AppNotificationsState {
 class AppNotificationsFailure extends AppNotificationsState {
   const AppNotificationsFailure(
     this.failureState, {
-    super.todayNotifications,
-    super.previousNotifications,
-    super.unreadNotificationCount,
-    super.loadingMessageId,
-    super.isInitialized,
+    required super.todayNotifications,
+    required super.previousNotifications,
+    required super.unreadNotificationCount,
+    required super.loadingMessageId,
+    required super.isInitialized,
   });
 
   final AppNotificationsFailureEnum failureState;
