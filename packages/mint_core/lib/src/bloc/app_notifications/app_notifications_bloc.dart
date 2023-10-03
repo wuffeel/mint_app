@@ -95,7 +95,6 @@ class AppNotificationsBloc<T extends UserModel?>
                   .where((e) => e.status == AppNotificationStatus.delivered)
                   .length;
 
-          final state = this.state;
           return AppNotificationsState(
             todayNotifications: todayNotifications,
             previousNotifications: previousNotifications,
