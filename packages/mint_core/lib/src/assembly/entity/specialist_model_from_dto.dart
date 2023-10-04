@@ -26,5 +26,6 @@ class SpecialistModelFromDto
         photoUrl: await _service.getLinkByStorageUrl(param.photoUrl),
         about: param.about,
         education: param.education,
+        isOnline: param.isOnline,
       );
 }
