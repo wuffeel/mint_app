@@ -29,7 +29,7 @@ dependencies:
   http: ^1.1.0
   image_picker: ^1.0.4
   injectable: ^2.3.0
-  intl: 0.18.0
+  intl: 0.18.1
   json_annotation: 4.8.1
   meta: ^1.9.1
   mime: ^1.0.4
