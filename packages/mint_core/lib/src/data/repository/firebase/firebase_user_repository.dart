@@ -244,7 +244,7 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
         firestore.collection(FirebaseUserRepository._specialistCollection);
 
     final storageUrl = userDataDto.photoUrl;
-    if (storageUrl == null) return;
+    if (storageUrl == null || storageUrl.startsWith('http')) return;
     return specialistCollection
         .doc(userDataDto.id)
         .update({'photoUrl': storageUrl});
