@@ -9,6 +9,9 @@ abstract class UserService {
 
   Future<UserModel?> getUserData(String userId);
 
+  /// If user photo changed, user with new photo should be returned.
+  ///
+  /// Otherwise, unchanged [userData] should be returned.
   Future<UserModel> updateUserData(UserModel userData, {FileData? photoData});
 
   Future<void> initializeUserPresence(String userId);
