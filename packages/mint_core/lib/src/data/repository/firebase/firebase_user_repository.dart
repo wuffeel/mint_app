@@ -233,24 +233,6 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
   );
 
   @override
-  Future<void> updateUserData(
-    UserModelDto userDataDto, {
-    String? photoUrl,
-  }) async {
-    await super.updateUserData(userDataDto);
-
-    final firestore = await _firebaseInitializer.firestore;
-    final specialistCollection =
-        firestore.collection(FirebaseUserRepository._specialistCollection);
-
-    final storageUrl = userDataDto.photoUrl;
-    if (storageUrl == null || storageUrl.startsWith('http')) return;
-    return specialistCollection
-        .doc(userDataDto.id)
-        .update({'photoUrl': storageUrl});
-  }
-
-  @override
   Future<UserModelDto> _createUser(
     String uid,
     String? phoneNumber,
