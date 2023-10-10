@@ -36,7 +36,10 @@ class FirebaseStorageRepository implements StorageRepository {
     final storage = await _firebaseInitializer.storage;
 
     final storagePath = 'users/$userId${extension(fileName)}';
-    final file = await storage.ref().child(storagePath).putData(bytes);
+    final file = await storage.ref().child(storagePath).putData(
+          bytes,
+          SettableMetadata(contentType: lookupMimeType(fileName)),
+        );
     final photoUrl = await file.ref.getDownloadURL();
     return (photoUrl: photoUrl, storageUrl: storagePath);
   }
