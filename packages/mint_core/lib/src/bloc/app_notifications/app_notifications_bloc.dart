@@ -146,7 +146,12 @@ class AppNotificationsBloc<T extends UserModel?>
       log(
         'AppNotificationsMarkAsReadFailure: [${event.notificationId}], $error',
       );
-      emit(_failureState(AppNotificationsFailureEnum.markAsRead));
+      emit(
+        _failureState(
+          AppNotificationsFailureEnum.markAsRead,
+          loadingMessageId: state.loadingMessageId,
+        ),
+      );
     }
   }
 
@@ -161,7 +166,12 @@ class AppNotificationsBloc<T extends UserModel?>
       await _clearAppNotificationsUseCase(user.id);
     } catch (error) {
       log('AppNotificationsClearFailure: $error');
-      emit(_failureState(AppNotificationsFailureEnum.clear));
+      emit(
+        _failureState(
+          AppNotificationsFailureEnum.clear,
+          loadingMessageId: state.loadingMessageId,
+        ),
+      );
     }
   }
 
@@ -195,14 +205,15 @@ class AppNotificationsBloc<T extends UserModel?>
   }
 
   AppNotificationsFailure _failureState(
-    AppNotificationsFailureEnum failureState,
-  ) =>
+    AppNotificationsFailureEnum failureState, {
+    String? loadingMessageId,
+  }) =>
       AppNotificationsFailure(
         failureState,
         todayNotifications: state.todayNotifications,
         previousNotifications: state.previousNotifications,
         unreadNotificationCount: state.unreadNotificationCount,
-        loadingMessageId: state.loadingMessageId,
         isInitialized: state.isInitialized,
+        loadingMessageId: loadingMessageId,
       );
 }
