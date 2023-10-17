@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
 
@@ -16,6 +17,7 @@ class FirebaseChatRepository implements ChatRepository {
   static const _roomCollection = 'chat_rooms';
   static const _chatUsersCollection = 'chat_users';
   static const _messagesCollection = 'messages';
+  static const _typingCollection = 'typing';
 
   final Factory<types.User, Map<String, dynamic>> _chatUserFromMap;
 
@@ -139,6 +141,40 @@ class FirebaseChatRepository implements ChatRepository {
         .get();
 
     return query.count;
+  }
+
+  @override
+  Future<Stream<bool>> onTypingPresenceInitialize(
+    String userId,
+    String roomId,
+  ) async {
+    final typingRef = await _typingRef(userId, roomId);
+    await typingRef.onDisconnect().set({'isTyping': false});
+
+    // TODO(wuffeel): check if works
+    return typingRef.onValue.map((event) {
+      final snapshot = event.snapshot;
+      if (!snapshot.exists) return false;
+      return (snapshot.value as Map?)?.values.first as bool? ?? false;
+    });
+  }
+
+  @override
+  Future<void> onTypingStart(String userId, String roomId) async {
+    final typingRef = await _typingRef(userId, roomId);
+    await typingRef.set({'isTyping': true});
+  }
+
+  @override
+  Future<void> onTypingEnd(String userId, String roomId) async {
+    final typingRef = await _typingRef(userId, roomId);
+    await typingRef.set({'isTyping': false});
+  }
+
+  /// Firebase Realtime Database typing collection reference.
+  Future<DatabaseReference> _typingRef(String userId, String roomId) async {
+    final database = await _firebaseInitializer.database;
+    return database.ref(_typingCollection).child(roomId).child(userId);
   }
 
   // Used here instead of factory to prevent circular dependency.

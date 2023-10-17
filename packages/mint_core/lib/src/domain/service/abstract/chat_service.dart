@@ -28,4 +28,10 @@ abstract class ChatService {
   Future<void> markMessageAsRead(String roomId, String messageId);
 
   Future<int> fetchUnreadMessagesCount(String roomId, String otherUserId);
+
+  Future<Stream<bool>> onTypingPresenceInitialize(String userId, String roomId);
+
+  Future<void> onTypingStart(String userId, String roomId);
+
+  Future<void> onTypingEnd(String userId, String roomId);
 }

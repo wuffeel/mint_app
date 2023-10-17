@@ -87,6 +87,24 @@ class FirebaseChatService implements ChatService {
     return _chatRepository.fetchUnreadMessagesCount(roomId, otherUserId);
   }
 
+  @override
+  Future<Stream<bool>> onTypingPresenceInitialize(
+    String userId,
+    String roomId,
+  ) {
+    return _chatRepository.onTypingPresenceInitialize(userId, roomId);
+  }
+
+  @override
+  Future<void> onTypingStart(String userId, String roomId) {
+    return _chatRepository.onTypingStart(userId, roomId);
+  }
+
+  @override
+  Future<void> onTypingEnd(String userId, String roomId) {
+    return _chatRepository.onTypingEnd(userId, roomId);
+  }
+
   Future<void> _handlePartialFileSend(
     dynamic message,
     String roomId,
