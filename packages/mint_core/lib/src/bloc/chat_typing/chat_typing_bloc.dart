@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:injectable/injectable.dart';
 import 'package:meta/meta.dart';
 
@@ -38,7 +37,7 @@ class ChatTypingBloc extends Bloc<ChatTypingEvent, ChatTypingState> {
     this._onChatTypingEndUseCase,
   ) : super(const ChatTypingState()) {
     on<ChatTypingInitializeRequested>(_onInitializeTyping);
-    on<ChatTypingStartRequested>(_onTypingStart, transformer: restartable());
+    on<ChatTypingStartRequested>(_onTypingStart);
     on<ChatTypingEndRequested>(_onTypingEnd);
     on<ChatTypingChanged>(_onTypingChanged);
   }
