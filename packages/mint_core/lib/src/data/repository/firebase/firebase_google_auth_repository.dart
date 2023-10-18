@@ -95,7 +95,9 @@ class FirebaseGoogleAuthRepositoryNative extends FirebaseGoogleAuthRepository {
 class FirebaseGoogleAuthRepositoryWeb extends FirebaseGoogleAuthRepository {
   FirebaseGoogleAuthRepositoryWeb(super.firebaseInitializer);
 
-  final _googleProvider = GoogleAuthProvider();
+  final _googleProvider = GoogleAuthProvider().setCustomParameters({
+    'prompt': 'select_account',
+  });
 
   @override
   Future<void> signInWithGoogle() async {
