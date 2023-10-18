@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
 import 'package:rxdart/rxdart.dart';
@@ -42,7 +43,7 @@ class FirebaseUserRepository implements UserRepository {
     final userData = userDoc.data();
 
     if (userData == null || userData.isEmpty) {
-      return _createUser(user.uid, user.phoneNumber, userCollection);
+      return _createUser(user, userCollection);
     }
 
     return UserModelDto.fromJsonWithId(userData, user.uid);
@@ -172,8 +173,7 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   Future<UserModelDto> _createUser(
-    String uid,
-    String? phoneNumber,
+    User user,
     CollectionReference userCollection,
   ) {
     throw UnimplementedError('[_createUser] has not been implemented');
@@ -253,13 +253,26 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
 
   @override
   Future<UserModelDto> _createUser(
-    String uid,
-    String? phoneNumber,
+    User user,
     CollectionReference userCollection,
   ) async {
-    final userModelDto = UserModelDto(id: uid, phoneNumber: phoneNumber);
+    String? firstName;
+    String? lastName;
+
+    final userNameSplit = user.displayName?.split(' ');
+    if (userNameSplit != null && userNameSplit.isNotEmpty) {
+      firstName = userNameSplit.first;
+      lastName = userNameSplit.last;
+    }
+    final userModelDto = UserModelDto(
+      id: user.uid,
+      email: user.email,
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: user.phoneNumber,
+    );
     final userModelDtoMap = userModelDto.toJsonWithoutId();
-    await userCollection.doc(uid).set(userModelDtoMap);
+    await userCollection.doc(user.uid).set(userModelDtoMap);
 
     return userModelDto;
   }
@@ -275,13 +288,26 @@ class FirebaseNativeUserRepository extends FirebaseUserRepository {
 
   @override
   Future<PatientUserDto> _createUser(
-    String uid,
-    String? phoneNumber,
+    User user,
     CollectionReference userCollection,
   ) async {
-    final userModelDto = PatientUserDto(id: uid, phoneNumber: phoneNumber);
+    String? firstName;
+    String? lastName;
+
+    final userNameSplit = user.displayName?.split(' ');
+    if (userNameSplit != null && userNameSplit.isNotEmpty) {
+      firstName = userNameSplit.first;
+      lastName = userNameSplit.last;
+    }
+    final userModelDto = PatientUserDto(
+      id: user.uid,
+      email: user.email,
+      firstName: firstName,
+      lastName: lastName,
+      phoneNumber: user.phoneNumber,
+    );
     final userModelDtoMap = userModelDto.toJsonWithoutId();
-    await userCollection.doc(uid).set(userModelDtoMap);
+    await userCollection.doc(user.uid).set(userModelDtoMap);
 
     return userModelDto;
   }
