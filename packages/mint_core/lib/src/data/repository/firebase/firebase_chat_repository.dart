@@ -151,7 +151,6 @@ class FirebaseChatRepository implements ChatRepository {
     final typingRef = await _typingRef(userId, roomId);
     await typingRef.onDisconnect().set({'isTyping': false});
 
-    // TODO(wuffeel): check if works
     return typingRef.onValue.map((event) {
       final snapshot = event.snapshot;
       if (!snapshot.exists) return false;
