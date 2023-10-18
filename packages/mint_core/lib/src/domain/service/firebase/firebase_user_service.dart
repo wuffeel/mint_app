@@ -26,7 +26,9 @@ class FirebaseUserService implements UserService {
   Future<UserModel?> getCurrentUser() async {
     final user = await _userRepository.getCurrentUser();
     if (user == null) return null;
-    return _userModelFromDto.create(user);
+
+    final userModel = await _userModelFromDto.create(user);
+    return userModel;
   }
 
   @override
