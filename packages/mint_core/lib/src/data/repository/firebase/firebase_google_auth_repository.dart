@@ -62,11 +62,14 @@ class FirebaseGoogleAuthRepository extends GoogleAuthRepository {
 class FirebaseGoogleAuthRepositoryNative extends FirebaseGoogleAuthRepository {
   FirebaseGoogleAuthRepositoryNative(super.firebaseInitializer);
 
+  final _googleSignIn = GoogleSignIn();
+
   @override
   Future<void> signInWithGoogle() async {
     final auth = await _firebaseInitializer.firebaseAuth;
 
-    final googleUser = await GoogleSignIn().signIn();
+    await _googleSignIn.signOut().catchError((_) => null);
+    final googleUser = await _googleSignIn.signIn();
     final googleAuth = await googleUser?.authentication;
 
     if (googleAuth == null) return;
@@ -85,7 +88,7 @@ class FirebaseGoogleAuthRepositoryNative extends FirebaseGoogleAuthRepository {
       user.uid,
       UserType.patient,
       onSignOut: () async {
-        await Future.wait([auth.signOut(), GoogleSignIn().signOut()]);
+        await Future.wait([auth.signOut(), _googleSignIn.signOut()]);
       },
     );
   }
