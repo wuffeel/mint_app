@@ -15,7 +15,7 @@ class FirebaseAppNotificationService implements AppNotificationService {
 
   final AppNotificationRepository _appNotificationRepository;
 
-  final Factory<NotificationModel?, NotificationModelDto>
+  final Factory<NotificationModel, NotificationModelDto>
       _notificationModelFromDto;
 
   @override
@@ -28,7 +28,6 @@ class FirebaseAppNotificationService implements AppNotificationService {
     return notificationStream.asyncMap(
       (notification) => notification
           .map(_notificationModelFromDto.create)
-          .whereType<NotificationModel>()
           .toList(),
     );
   }
