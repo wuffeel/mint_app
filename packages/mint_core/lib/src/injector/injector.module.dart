@@ -7,36 +7,36 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i2;
 
-import 'package:flutter_chat_types/flutter_chat_types.dart' as _i17;
+import 'package:flutter_chat_types/flutter_chat_types.dart' as _i23;
 import 'package:injectable/injectable.dart' as _i1;
 
-import '../../mint_assembly.dart' as _i16;
+import '../../mint_assembly.dart' as _i19;
 import '../../mint_bloc.dart' as _i68;
-import '../../mint_core.dart' as _i25;
+import '../../mint_core.dart' as _i20;
 import '../../mint_module.dart' as _i33;
-import '../assembly/entity/chat_user_data_from_map.dart' as _i18;
-import '../assembly/entity/notification_model_from_dto.dart' as _i21;
-import '../assembly/entity/specialist_model_from_dto.dart' as _i69;
-import '../assembly/entity/specialist_work_info_from_dto.dart' as _i26;
-import '../assembly/entity/user_model_from_dto.dart' as _i70;
-import '../assembly/entity/user_presence_from_dto.dart' as _i24;
+import '../assembly/entity/chat_user_data_from_map.dart' as _i28;
+import '../assembly/entity/notification_model_from_dto.dart' as _i31;
+import '../assembly/entity/specialist_model_from_dto.dart' as _i70;
+import '../assembly/entity/specialist_work_info_from_dto.dart' as _i22;
+import '../assembly/entity/user_model_from_dto.dart' as _i69;
+import '../assembly/entity/user_presence_from_dto.dart' as _i27;
 import '../assembly/factory.dart' as _i12;
 import '../assembly/model/specialist_model_to_dto.dart' as _i15;
-import '../assembly/model/user_model_dto_to_chat_user.dart' as _i27;
-import '../assembly/model/user_model_to_dto.dart' as _i31;
-import '../assembly/modified_user_dto_to_map.dart' as _i28;
+import '../assembly/model/user_model_dto_to_chat_user.dart' as _i24;
+import '../assembly/model/user_model_to_dto.dart' as _i18;
+import '../assembly/modified_user_dto_to_map.dart' as _i21;
 import '../bloc/app_notifications/app_notifications_bloc.dart' as _i65;
 import '../bloc/chat/chat_bloc.dart' as _i66;
 import '../bloc/chat_room/chat_room_bloc.dart' as _i67;
 import '../bloc/presence_message/presence_message_bloc.dart' as _i54;
 import '../bloc/unread_messages/unread_messages_bloc.dart' as _i61;
 import '../data/model/notification_model_dto/notification_model_dto.dart'
-    as _i20;
+    as _i30;
 import '../data/model/specialist_model_dto/specialist_model_dto.dart' as _i13;
 import '../data/model/specialist_work_info_dto/specialist_work_info_dto.dart'
     as _i40;
-import '../data/model/user_model_dto/user_model_dto.dart' as _i29;
-import '../data/model/user_presence_dto/user_presence_dto.dart' as _i23;
+import '../data/model/user_model_dto/user_model_dto.dart' as _i16;
+import '../data/model/user_presence_dto/user_presence_dto.dart' as _i26;
 import '../data/repository/abstract/app_notification_repository.dart' as _i3;
 import '../data/repository/abstract/booking_repository_base.dart' as _i5;
 import '../data/repository/abstract/chat_repository.dart' as _i7;
@@ -44,8 +44,8 @@ import '../data/repository/abstract/file_repository.dart' as _i71;
 import '../data/repository/abstract/firebase_initializer.dart' as _i41;
 import '../data/repository/abstract/storage_repository.dart' as _i59;
 import '../data/repository/abstract/user_repository.dart' as _i63;
-import '../data/repository/file_repository_native.dart' as _i72;
-import '../data/repository/file_repository_web.dart' as _i73;
+import '../data/repository/file_repository_native.dart' as _i73;
+import '../data/repository/file_repository_web.dart' as _i72;
 import '../data/repository/firebase/firebase_app_notification_repository.dart'
     as _i75;
 import '../data/repository/firebase/firebase_booking_repository_base.dart'
@@ -55,12 +55,12 @@ import '../data/repository/firebase/firebase_initializer_impl.dart' as _i42;
 import '../data/repository/firebase/firebase_storage_repository.dart' as _i43;
 import '../data/repository/firebase/firebase_user_repository.dart' as _i44;
 import '../domain/controller/user_controller.dart' as _i62;
-import '../domain/entity/notification_model/notification_model.dart' as _i19;
+import '../domain/entity/notification_model/notification_model.dart' as _i29;
 import '../domain/entity/specialist_model/specialist_model.dart' as _i14;
 import '../domain/entity/specialist_work_info/specialist_work_info.dart'
     as _i39;
-import '../domain/entity/user_model/user_model.dart' as _i30;
-import '../domain/entity/user_presence/user_presence.dart' as _i22;
+import '../domain/entity/user_model/user_model.dart' as _i17;
+import '../domain/entity/user_presence/user_presence.dart' as _i25;
 import '../domain/service/abstract/app_notification_service.dart' as _i4;
 import '../domain/service/abstract/booking_service_base.dart' as _i6;
 import '../domain/service/abstract/chat_service.dart' as _i8;
@@ -97,8 +97,8 @@ import '../domain/use_case/send_message_use_case.dart' as _i57;
 import '../domain/use_case/specialist_work_info_fetch_use_case.dart' as _i58;
 import '../module/mint_module.dart' as _i83;
 
-const String _native = 'native';
 const String _web = 'web';
+const String _native = 'native';
 
 class MintCorePackageModule extends _i1.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -122,28 +122,27 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
         () => _i11.DeleteMessageUseCase(gh<_i8.ChatService>()));
     gh.factory<_i12.Factory<_i13.SpecialistModelDto, _i14.SpecialistModel>>(
         () => _i15.SpecialistModelToDto());
-    gh.factory<_i16.Factory<_i17.User, Map<String, dynamic>>>(
-        () => _i18.ChatUserDataFromMap());
-    gh.factory<
-            _i16.Factory<_i19.NotificationModel?, _i20.NotificationModelDto>>(
-        () => _i21.NotificationModelFromDto());
-    gh.factory<_i16.Factory<_i22.UserPresence, _i23.UserPresenceDto>>(
-        () => _i24.UserPresenceFromDto());
-    gh.factory<
-            _i16.Factory<_i25.SpecialistWorkInfo, _i25.SpecialistWorkInfoDto>>(
-        () => _i26.SpecialistWorkInfoFromDto());
-    gh.factory<_i16.Factory<_i17.User, _i25.UserModelDto>>(
-        () => _i27.UserModelDtoToChatUserMap());
-    gh.factory<_i16.Factory<Map<String, dynamic>, _i25.UserModelDto>>(
-        () => _i28.ModifiedUserDtoToMap());
-    gh.factory<_i12.Factory<_i29.UserModelDto, _i30.UserModel>>(
-      () => _i31.PatientUserToDto(),
+    gh.factory<_i12.Factory<_i16.UserModelDto, _i17.UserModel>>(
+      () => _i18.PatientUserToDto(),
       registerFor: {_native},
     );
-    gh.factory<_i12.Factory<_i29.UserModelDto, _i30.UserModel>>(
-      () => _i31.UserModelToDto(),
+    gh.factory<_i19.Factory<Map<String, dynamic>, _i20.UserModelDto>>(
+        () => _i21.ModifiedUserDtoToMap());
+    gh.factory<
+            _i19.Factory<_i20.SpecialistWorkInfo, _i20.SpecialistWorkInfoDto>>(
+        () => _i22.SpecialistWorkInfoFromDto());
+    gh.factory<_i12.Factory<_i16.UserModelDto, _i17.UserModel>>(
+      () => _i18.UserModelToDto(),
       registerFor: {_web},
     );
+    gh.factory<_i19.Factory<_i23.User, _i20.UserModelDto>>(
+        () => _i24.UserModelDtoToChatUserMap());
+    gh.factory<_i19.Factory<_i25.UserPresence, _i26.UserPresenceDto>>(
+        () => _i27.UserPresenceFromDto());
+    gh.factory<_i19.Factory<_i23.User, Map<String, dynamic>>>(
+        () => _i28.ChatUserDataFromMap());
+    gh.factory<_i19.Factory<_i29.NotificationModel, _i30.NotificationModelDto>>(
+        () => _i31.NotificationModelFromDto());
     gh.factory<_i32.FetchChatRoomListUseCase>(
         () => _i32.FetchChatRoomListUseCase(gh<_i33.ChatService>()));
     gh.factory<_i34.FetchChatRoomUseCase>(
@@ -154,9 +153,7 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
     gh.factory<_i37.FirebaseAppNotificationService>(() =>
         _i37.FirebaseAppNotificationService(
           gh<_i3.AppNotificationRepository>(),
-          gh<
-              _i16
-              .Factory<_i19.NotificationModel?, _i20.NotificationModelDto>>(),
+          gh<_i19.Factory<_i29.NotificationModel, _i30.NotificationModelDto>>(),
         ));
     gh.factory<_i38.FirebaseBookingServiceBase>(() =>
         _i38.FirebaseBookingServiceBase(
@@ -166,28 +163,28 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
               .Factory<_i39.SpecialistWorkInfo, _i40.SpecialistWorkInfoDto>>(),
         ));
     gh.lazySingleton<_i41.FirebaseInitializer>(
-      () => _i42.FirebaseInitializerNative(),
-      registerFor: {_native},
-    );
-    gh.lazySingleton<_i41.FirebaseInitializer>(
       () => _i42.FirebaseInitializerWeb(),
       registerFor: {_web},
+    );
+    gh.lazySingleton<_i41.FirebaseInitializer>(
+      () => _i42.FirebaseInitializerNative(),
+      registerFor: {_native},
     );
     gh.lazySingleton<_i43.FirebaseStorageRepository>(
         () => _i43.FirebaseStorageRepository(gh<_i41.FirebaseInitializer>()));
     gh.lazySingleton<_i44.FirebaseUserRepository>(
-      () => _i44.FirebaseWebUserRepository(
-        gh<_i33.FirebaseInitializer>(),
-        gh<_i16.Factory<Map<String, dynamic>, _i25.UserModelDto>>(),
-      ),
-      registerFor: {_web},
-    );
-    gh.lazySingleton<_i44.FirebaseUserRepository>(
       () => _i44.FirebaseNativeUserRepository(
         gh<_i33.FirebaseInitializer>(),
-        gh<_i16.Factory<Map<String, dynamic>, _i25.UserModelDto>>(),
+        gh<_i19.Factory<Map<String, dynamic>, _i20.UserModelDto>>(),
       ),
       registerFor: {_native},
+    );
+    gh.lazySingleton<_i44.FirebaseUserRepository>(
+      () => _i44.FirebaseWebUserRepository(
+        gh<_i33.FirebaseInitializer>(),
+        gh<_i19.Factory<Map<String, dynamic>, _i20.UserModelDto>>(),
+      ),
+      registerFor: {_web},
     );
     gh.factory<_i45.GetAppNotificationStreamUseCase>(() =>
         _i45.GetAppNotificationStreamUseCase(gh<_i4.AppNotificationService>()));
@@ -222,26 +219,26 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
     gh.factory<_i60.StorageService>(() => mintModule.storageService);
     gh.factory<_i61.UnreadMessagesBloc>(() =>
         _i61.UnreadMessagesBloc(gh<_i33.FetchUnreadMessagesCountUseCase>()));
-    gh.lazySingleton<_i62.UserController<_i30.PatientUser?>>(
-      () => _i62.UserControllerNative(),
-      registerFor: {_native},
-    );
-    gh.lazySingleton<_i62.UserController<_i30.UserModel?>>(
+    gh.lazySingleton<_i62.UserController<_i17.UserModel?>>(
       () => _i62.UserControllerWeb(),
       registerFor: {_web},
     );
+    gh.lazySingleton<_i62.UserController<_i17.PatientUser?>>(
+      () => _i62.UserControllerNative(),
+      registerFor: {_native},
+    );
     gh.factory<_i63.UserRepository>(() => mintModule.userRepository);
     gh.factory<_i64.UserService>(() => mintModule.userService);
-    gh.factory<_i65.AppNotificationsBloc<_i25.UserModel?>>(
+    gh.factory<_i65.AppNotificationsBloc<_i20.UserModel?>>(
         () => _i65.AppNotificationsBlocBase(
               gh<_i45.GetAppNotificationStreamUseCase>(),
               gh<_i34.FetchChatRoomUseCase>(),
               gh<_i49.MarkAppNotificationAsReadUseCase>(),
               gh<_i9.ClearAppNotificationsUseCase>(),
-              gh<_i62.UserController<_i25.UserModel?>>(),
+              gh<_i62.UserController<_i20.UserModel?>>(),
             ));
-    gh.factory<_i66.ChatBloc<_i25.UserModel?>>(() => _i66.ChatBlocBasic(
-          gh<_i62.UserController<_i25.UserModel?>>(),
+    gh.factory<_i66.ChatBloc<_i20.UserModel?>>(() => _i66.ChatBlocBasic(
+          gh<_i62.UserController<_i20.UserModel?>>(),
           gh<_i47.GetMessagesUseCase>(),
           gh<_i10.CreateChatRoomUseCase>(),
           gh<_i57.SendMessageUseCase>(),
@@ -255,7 +252,7 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
         ));
     gh.factory<_i66.ChatBlocPatient>(
       () => _i66.ChatBlocPatient(
-        gh<_i62.UserController<_i25.PatientUser?>>(),
+        gh<_i62.UserController<_i20.PatientUser?>>(),
         gh<_i47.GetMessagesUseCase>(),
         gh<_i10.CreateChatRoomUseCase>(),
         gh<_i57.SendMessageUseCase>(),
@@ -269,36 +266,36 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
       ),
       registerFor: {_native},
     );
-    gh.factory<_i67.ChatRoomBloc<_i25.UserModel?>>(() => _i67.ChatRoomBlocBasic(
+    gh.factory<_i67.ChatRoomBloc<_i20.UserModel?>>(() => _i67.ChatRoomBlocBasic(
           gh<_i32.FetchChatRoomListUseCase>(),
-          gh<_i68.UserController<_i25.UserModel?>>(),
+          gh<_i68.UserController<_i20.UserModel?>>(),
         ));
     gh.factory<_i67.ChatRoomBlocPatient>(
       () => _i67.ChatRoomBlocPatient(
         gh<_i32.FetchChatRoomListUseCase>(),
-        gh<_i68.UserController<_i25.PatientUser?>>(),
+        gh<_i68.UserController<_i20.PatientUser?>>(),
       ),
+      registerFor: {_native},
+    );
+    gh.factory<_i12.Factory<_i2.Future<_i17.UserModel>, _i16.UserModelDto>>(
+      () => _i69.PatientUserFromDto(gh<_i60.StorageService>()),
       registerFor: {_native},
     );
     gh.factory<
             _i12.Factory<_i2.Future<_i14.SpecialistModel>,
                 _i13.SpecialistModelDto>>(
-        () => _i69.SpecialistModelFromDto(gh<_i60.StorageService>()));
-    gh.factory<_i12.Factory<_i2.Future<_i30.UserModel>, _i29.UserModelDto>>(
-      () => _i70.PatientUserFromDto(gh<_i60.StorageService>()),
-      registerFor: {_native},
-    );
-    gh.factory<_i12.Factory<_i2.Future<_i30.UserModel>, _i29.UserModelDto>>(
-      () => _i70.UserModelFromDto(gh<_i60.StorageService>()),
+        () => _i70.SpecialistModelFromDto(gh<_i60.StorageService>()));
+    gh.factory<_i12.Factory<_i2.Future<_i17.UserModel>, _i16.UserModelDto>>(
+      () => _i69.UserModelFromDto(gh<_i60.StorageService>()),
       registerFor: {_web},
     );
     gh.lazySingleton<_i71.FileRepository>(
-      () => _i72.FileRepositoryNative(gh<_i33.FirebaseInitializer>()),
-      registerFor: {_native},
+      () => _i72.FileRepositoryWeb(gh<_i33.FirebaseInitializer>()),
+      registerFor: {_web},
     );
     gh.lazySingleton<_i71.FileRepository>(
-      () => _i73.FileRepositoryWeb(gh<_i33.FirebaseInitializer>()),
-      registerFor: {_web},
+      () => _i73.FileRepositoryNative(gh<_i33.FirebaseInitializer>()),
+      registerFor: {_native},
     );
     gh.factory<_i74.FileServiceImpl>(
         () => _i74.FileServiceImpl(gh<_i71.FileRepository>()));
@@ -309,7 +306,7 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
     gh.lazySingleton<_i77.FirebaseChatRepository>(
         () => _i77.FirebaseChatRepository(
               gh<_i33.FirebaseInitializer>(),
-              gh<_i16.Factory<_i17.User, Map<String, dynamic>>>(),
+              gh<_i19.Factory<_i23.User, Map<String, dynamic>>>(),
             ));
     gh.factory<_i78.FirebaseChatService>(() => _i78.FirebaseChatService(
           gh<_i7.ChatRepository>(),
@@ -321,9 +318,9 @@ class MintCorePackageModule extends _i1.MicroPackageModule {
     gh.factory<_i80.FirebaseUserService>(() => _i80.FirebaseUserService(
           gh<_i33.UserRepository>(),
           gh<_i33.StorageService>(),
-          gh<_i16.Factory<_i2.Future<_i25.UserModel>, _i25.UserModelDto>>(),
-          gh<_i16.Factory<_i25.UserModelDto, _i25.UserModel>>(),
-          gh<_i16.Factory<_i25.UserPresence, _i23.UserPresenceDto>>(),
+          gh<_i19.Factory<_i2.Future<_i20.UserModel>, _i20.UserModelDto>>(),
+          gh<_i19.Factory<_i20.UserModelDto, _i20.UserModel>>(),
+          gh<_i19.Factory<_i20.UserPresence, _i26.UserPresenceDto>>(),
         ));
     gh.factory<_i81.GetUserPresenceUseCase>(
         () => _i81.GetUserPresenceUseCase(gh<_i64.UserService>()));
