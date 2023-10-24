@@ -30,7 +30,7 @@ class FirebaseAppNotificationRepository implements AppNotificationRepository {
     final userNotificationsCollection =
         await _userNotificationsCollectionRef(userId);
 
-    return userNotificationsCollection.snapshots().asyncMap((snap) {
+    return userNotificationsCollection.snapshots().map((snap) {
       return snap.docs
           .map(
             (notification) => NotificationModelDto.fromJsonWithId(

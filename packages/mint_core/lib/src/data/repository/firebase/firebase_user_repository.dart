@@ -147,7 +147,7 @@ class FirebaseUserRepository implements UserRepository {
         .collection(_presenceCollection)
         .doc(userId)
         .snapshots()
-        .asyncMap((doc) {
+        .map((doc) {
       final data = doc.data();
       if (data == null) return null;
       return UserPresenceDto.fromJson(data);

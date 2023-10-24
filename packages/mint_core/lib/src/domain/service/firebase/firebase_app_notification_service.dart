@@ -25,11 +25,9 @@ class FirebaseAppNotificationService implements AppNotificationService {
     final notificationStream =
         await _appNotificationRepository.getAppNotificationStream(userId);
 
-    return notificationStream.asyncMap(
-      (notification) => notification
-          .map(_notificationModelFromDto.create)
-          .toList(),
-    );
+    return notificationStream.map((notification) {
+      return notification.map(_notificationModelFromDto.create).toList();
+    });
   }
 
   @override

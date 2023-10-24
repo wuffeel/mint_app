@@ -88,6 +88,6 @@ class FirebaseUserService implements UserService {
   @override
   Future<Stream<UserPresence>> getUserPresence(String userId) async {
     final stream = await _userRepository.getUserPresence(userId);
-    return stream.asyncMap(_userPresenceFromDto.create);
+    return stream.map(_userPresenceFromDto.create);
   }
 }
