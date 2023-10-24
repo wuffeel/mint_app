@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:injectable/injectable.dart';
@@ -18,6 +20,8 @@ class FirebaseUserRepository implements UserRepository {
 
   final Factory<Map<String, dynamic>, UserModelDto> _modifiedUserDtoToMap;
 
+  StreamSubscription<DatabaseEvent>? _userPresenceSubscription;
+
   static const _userCollection = 'users';
   static const _presenceCollection = 'presence';
   static const _chatUserCollection = 'chat_users';
@@ -37,7 +41,7 @@ class FirebaseUserRepository implements UserRepository {
     final userDoc = await userCollection.doc(user.uid).get();
     final userData = userDoc.data();
 
-    if (userData == null) {
+    if (userData == null || userData.isEmpty) {
       return _createUser(user.uid, user.phoneNumber, userCollection);
     }
 
@@ -72,13 +76,20 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> updateUserData(UserModelDto userDataDto) async {
+  Future<void> updateUserData(
+    UserModelDto userDataDto, {
+    String? photoUrl,
+  }) async {
     final firestore = await _firebaseInitializer.firestore;
     final userCollection = firestore.collection(_userCollection);
     final chatUserCollection = firestore.collection(_chatUserCollection);
 
+    /// Data to be updated for user in [_userCollection].
     final userDataMap = _modifiedUserDtoToMap.create(userDataDto);
-    final chatUserMap = _userModelDtoToChatUser(userDataDto);
+
+    /// Data to be updated for user in [_chatUserCollection]
+    final chatUserMap =
+        _userModelDtoToChatUser(userDataDto, photoUrl: photoUrl);
     await Future.wait([
       chatUserCollection.doc(userDataDto.id).update(chatUserMap),
       userCollection.doc(userDataDto.id).update(userDataMap),
@@ -111,7 +122,8 @@ class FirebaseUserRepository implements UserRepository {
       if (specialistExists) specialistRef.update(online);
     }
 
-    database.ref('.info/connected').onValue.listen((event) async {
+    _userPresenceSubscription =
+        database.ref('.info/connected').onValue.listen((event) async {
       if (event.snapshot.value == null) {
         await setFirestoreOfflineStatus();
         return;
@@ -124,13 +136,18 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
+  Future<void> cancelUserPresenceSubscription() async {
+    await _userPresenceSubscription?.cancel();
+  }
+
+  @override
   Future<Stream<UserPresenceDto>> getUserPresence(String userId) async {
     final firestore = await _firebaseInitializer.firestore;
     return firestore
         .collection(_presenceCollection)
         .doc(userId)
         .snapshots()
-        .asyncMap((doc) {
+        .map((doc) {
       final data = doc.data();
       if (data == null) return null;
       return UserPresenceDto.fromJson(data);
@@ -141,13 +158,17 @@ class FirebaseUserRepository implements UserRepository {
   ///
   /// Used as method because [Factory<Map<String, dynamic>, UserModelDto>] is
   /// already defined
-  Map<String, dynamic> _userModelDtoToChatUser(UserModelDto param) {
-    return <String, dynamic>{
+  Map<String, dynamic> _userModelDtoToChatUser(
+    UserModelDto param, {
+    String? photoUrl,
+  }) {
+    final chatUserMap = <String, dynamic>{
       'firstName': param.firstName,
       'lastName': param.lastName,
-      'imageUrl': param.photoUrl,
-      'updatedAt': DateTime.now().toUtc(),
+      'updatedAt': FieldValue.serverTimestamp(),
     };
+    if (photoUrl != null) chatUserMap['imageUrl'] = photoUrl;
+    return chatUserMap;
   }
 
   Future<UserModelDto> _createUser(
@@ -213,7 +234,10 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
   );
 
   @override
-  Future<void> updateUserData(UserModelDto userDataDto) async {
+  Future<void> updateUserData(
+    UserModelDto userDataDto, {
+    String? photoUrl,
+  }) async {
     await super.updateUserData(userDataDto);
 
     final firestore = await _firebaseInitializer.firestore;
@@ -221,7 +245,7 @@ class FirebaseWebUserRepository extends FirebaseUserRepository {
         firestore.collection(FirebaseUserRepository._specialistCollection);
 
     final storageUrl = userDataDto.photoUrl;
-    if (storageUrl == null) return;
+    if (storageUrl == null || storageUrl.startsWith('http')) return;
     return specialistCollection
         .doc(userDataDto.id)
         .update({'photoUrl': storageUrl});

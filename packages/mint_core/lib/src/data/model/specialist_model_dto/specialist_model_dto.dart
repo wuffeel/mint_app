@@ -18,6 +18,7 @@ class SpecialistModelDto with _$SpecialistModelDto {
     required List<String> specializations,
     String? about,
     String? education,
+    bool? isOnline,
     String? photoUrl,
     @Default(0.0) double rating,
     @Default(0) int reviewCount,

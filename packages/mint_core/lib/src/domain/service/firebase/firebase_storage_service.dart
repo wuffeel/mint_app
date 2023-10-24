@@ -32,12 +32,7 @@ class FirebaseStorageService implements StorageService {
     String roomId, {
     String? contentType,
   }) {
-    return _storageRepository.uploadChatFile(
-      bytes,
-      fileName,
-      roomId,
-      contentType: contentType,
-    );
+    return _storageRepository.uploadChatFile(bytes, fileName, roomId);
   }
 
   @override

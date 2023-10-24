@@ -31,18 +31,18 @@ class FirebaseChatRepository implements ChatRepository {
   }
 
   @override
-  Future<types.Room> createRoom(String userId, String specialistId) async {
+  Future<types.Room> createRoom(String userId, String otherUserId) async {
     final chat = await _firebaseInitializer.chat;
 
     final chatUsersCollection = await _chatUsersCollectionRef;
-    final specialist = await chatUsersCollection.doc(specialistId).get();
-    final data = specialist.data();
+    final otherUser = await chatUsersCollection.doc(otherUserId).get();
+    final data = otherUser.data();
 
     if (data == null) {
       return const types.Room(id: '', type: types.RoomType.direct, users: []);
     }
 
-    data['id'] = specialist.id;
+    data['id'] = otherUser.id;
     final user = _chatUserFromMap.create(data);
     return chat.createRoom(user);
   }
@@ -134,7 +134,7 @@ class FirebaseChatRepository implements ChatRepository {
 
     final query = await messagesRef
         .where('authorId', isEqualTo: otherUserId)
-        .where('status', isNotEqualTo: types.Status.seen.name)
+        .where('status', isEqualTo: types.Status.delivered.name)
         .count()
         .get();
 

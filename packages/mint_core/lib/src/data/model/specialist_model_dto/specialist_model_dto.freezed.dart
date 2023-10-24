@@ -29,6 +29,7 @@ mixin _$SpecialistModelDto {
   List<String> get specializations => throw _privateConstructorUsedError;
   String? get about => throw _privateConstructorUsedError;
   String? get education => throw _privateConstructorUsedError;
+  bool? get isOnline => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
   int get reviewCount => throw _privateConstructorUsedError;
@@ -54,6 +55,7 @@ abstract class $SpecialistModelDtoCopyWith<$Res> {
       List<String> specializations,
       String? about,
       String? education,
+      bool? isOnline,
       String? photoUrl,
       double rating,
       int reviewCount});
@@ -80,6 +82,7 @@ class _$SpecialistModelDtoCopyWithImpl<$Res, $Val extends SpecialistModelDto>
     Object? specializations = null,
     Object? about = freezed,
     Object? education = freezed,
+    Object? isOnline = freezed,
     Object? photoUrl = freezed,
     Object? rating = null,
     Object? reviewCount = null,
@@ -117,6 +120,10 @@ class _$SpecialistModelDtoCopyWithImpl<$Res, $Val extends SpecialistModelDto>
           ? _value.education
           : education // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOnline: freezed == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool?,
       photoUrl: freezed == photoUrl
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
@@ -150,6 +157,7 @@ abstract class _$$_SpecialistModelDtoCopyWith<$Res>
       List<String> specializations,
       String? about,
       String? education,
+      bool? isOnline,
       String? photoUrl,
       double rating,
       int reviewCount});
@@ -174,6 +182,7 @@ class __$$_SpecialistModelDtoCopyWithImpl<$Res>
     Object? specializations = null,
     Object? about = freezed,
     Object? education = freezed,
+    Object? isOnline = freezed,
     Object? photoUrl = freezed,
     Object? rating = null,
     Object? reviewCount = null,
@@ -211,6 +220,10 @@ class __$$_SpecialistModelDtoCopyWithImpl<$Res>
           ? _value.education
           : education // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOnline: freezed == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool?,
       photoUrl: freezed == photoUrl
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
@@ -240,6 +253,7 @@ class _$_SpecialistModelDto extends _SpecialistModelDto
       required final List<String> specializations,
       this.about,
       this.education,
+      this.isOnline,
       this.photoUrl,
       this.rating = 0.0,
       this.reviewCount = 0})
@@ -273,6 +287,8 @@ class _$_SpecialistModelDto extends _SpecialistModelDto
   @override
   final String? education;
   @override
+  final bool? isOnline;
+  @override
   final String? photoUrl;
   @override
   @JsonKey()
@@ -283,7 +299,7 @@ class _$_SpecialistModelDto extends _SpecialistModelDto
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SpecialistModelDto(id: $id, experience: $experience, firstName: $firstName, lastName: $lastName, price: $price, specializations: $specializations, about: $about, education: $education, photoUrl: $photoUrl, rating: $rating, reviewCount: $reviewCount)';
+    return 'SpecialistModelDto(id: $id, experience: $experience, firstName: $firstName, lastName: $lastName, price: $price, specializations: $specializations, about: $about, education: $education, isOnline: $isOnline, photoUrl: $photoUrl, rating: $rating, reviewCount: $reviewCount)';
   }
 
   @override
@@ -299,6 +315,7 @@ class _$_SpecialistModelDto extends _SpecialistModelDto
       ..add(DiagnosticsProperty('specializations', specializations))
       ..add(DiagnosticsProperty('about', about))
       ..add(DiagnosticsProperty('education', education))
+      ..add(DiagnosticsProperty('isOnline', isOnline))
       ..add(DiagnosticsProperty('photoUrl', photoUrl))
       ..add(DiagnosticsProperty('rating', rating))
       ..add(DiagnosticsProperty('reviewCount', reviewCount));
@@ -322,6 +339,8 @@ class _$_SpecialistModelDto extends _SpecialistModelDto
             (identical(other.about, about) || other.about == about) &&
             (identical(other.education, education) ||
                 other.education == education) &&
+            (identical(other.isOnline, isOnline) ||
+                other.isOnline == isOnline) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
             (identical(other.rating, rating) || other.rating == rating) &&
@@ -341,6 +360,7 @@ class _$_SpecialistModelDto extends _SpecialistModelDto
       const DeepCollectionEquality().hash(_specializations),
       about,
       education,
+      isOnline,
       photoUrl,
       rating,
       reviewCount);
@@ -370,6 +390,7 @@ abstract class _SpecialistModelDto extends SpecialistModelDto {
       required final List<String> specializations,
       final String? about,
       final String? education,
+      final bool? isOnline,
       final String? photoUrl,
       final double rating,
       final int reviewCount}) = _$_SpecialistModelDto;
@@ -395,6 +416,8 @@ abstract class _SpecialistModelDto extends SpecialistModelDto {
   String? get about;
   @override
   String? get education;
+  @override
+  bool? get isOnline;
   @override
   String? get photoUrl;
   @override

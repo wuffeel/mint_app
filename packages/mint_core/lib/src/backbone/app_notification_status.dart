@@ -1,0 +1,1 @@
+enum AppNotificationStatus { delivered, seen }

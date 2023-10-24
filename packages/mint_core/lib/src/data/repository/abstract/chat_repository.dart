@@ -1,7 +1,7 @@
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 
 abstract class ChatRepository {
-  Future<types.Room> createRoom(String userId, String specialistId);
+  Future<types.Room> createRoom(String userId, String otherUserId);
 
   Future<Stream<List<types.Message>>> getMessages(types.Room room);
 

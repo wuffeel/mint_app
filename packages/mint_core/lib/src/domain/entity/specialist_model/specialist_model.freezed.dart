@@ -24,6 +24,7 @@ mixin _$SpecialistModel {
   List<String> get specializations => throw _privateConstructorUsedError;
   String? get about => throw _privateConstructorUsedError;
   String? get education => throw _privateConstructorUsedError;
+  bool? get isOnline => throw _privateConstructorUsedError;
   String? get photoUrl => throw _privateConstructorUsedError;
   double get rating => throw _privateConstructorUsedError;
   int get reviewCount => throw _privateConstructorUsedError;
@@ -48,6 +49,7 @@ abstract class $SpecialistModelCopyWith<$Res> {
       List<String> specializations,
       String? about,
       String? education,
+      bool? isOnline,
       String? photoUrl,
       double rating,
       int reviewCount});
@@ -74,6 +76,7 @@ class _$SpecialistModelCopyWithImpl<$Res, $Val extends SpecialistModel>
     Object? specializations = null,
     Object? about = freezed,
     Object? education = freezed,
+    Object? isOnline = freezed,
     Object? photoUrl = freezed,
     Object? rating = null,
     Object? reviewCount = null,
@@ -111,6 +114,10 @@ class _$SpecialistModelCopyWithImpl<$Res, $Val extends SpecialistModel>
           ? _value.education
           : education // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOnline: freezed == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool?,
       photoUrl: freezed == photoUrl
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
@@ -144,6 +151,7 @@ abstract class _$$_SpecialistModelCopyWith<$Res>
       List<String> specializations,
       String? about,
       String? education,
+      bool? isOnline,
       String? photoUrl,
       double rating,
       int reviewCount});
@@ -168,6 +176,7 @@ class __$$_SpecialistModelCopyWithImpl<$Res>
     Object? specializations = null,
     Object? about = freezed,
     Object? education = freezed,
+    Object? isOnline = freezed,
     Object? photoUrl = freezed,
     Object? rating = null,
     Object? reviewCount = null,
@@ -205,6 +214,10 @@ class __$$_SpecialistModelCopyWithImpl<$Res>
           ? _value.education
           : education // ignore: cast_nullable_to_non_nullable
               as String?,
+      isOnline: freezed == isOnline
+          ? _value.isOnline
+          : isOnline // ignore: cast_nullable_to_non_nullable
+              as bool?,
       photoUrl: freezed == photoUrl
           ? _value.photoUrl
           : photoUrl // ignore: cast_nullable_to_non_nullable
@@ -233,6 +246,7 @@ class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
       required final List<String> specializations,
       this.about,
       this.education,
+      this.isOnline,
       this.photoUrl,
       this.rating = 0.0,
       this.reviewCount = 0})
@@ -262,6 +276,8 @@ class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
   @override
   final String? education;
   @override
+  final bool? isOnline;
+  @override
   final String? photoUrl;
   @override
   @JsonKey()
@@ -272,7 +288,7 @@ class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
 
   @override
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'SpecialistModel(id: $id, experience: $experience, firstName: $firstName, lastName: $lastName, price: $price, specializations: $specializations, about: $about, education: $education, photoUrl: $photoUrl, rating: $rating, reviewCount: $reviewCount)';
+    return 'SpecialistModel(id: $id, experience: $experience, firstName: $firstName, lastName: $lastName, price: $price, specializations: $specializations, about: $about, education: $education, isOnline: $isOnline, photoUrl: $photoUrl, rating: $rating, reviewCount: $reviewCount)';
   }
 
   @override
@@ -288,6 +304,7 @@ class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
       ..add(DiagnosticsProperty('specializations', specializations))
       ..add(DiagnosticsProperty('about', about))
       ..add(DiagnosticsProperty('education', education))
+      ..add(DiagnosticsProperty('isOnline', isOnline))
       ..add(DiagnosticsProperty('photoUrl', photoUrl))
       ..add(DiagnosticsProperty('rating', rating))
       ..add(DiagnosticsProperty('reviewCount', reviewCount));
@@ -311,6 +328,8 @@ class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
             (identical(other.about, about) || other.about == about) &&
             (identical(other.education, education) ||
                 other.education == education) &&
+            (identical(other.isOnline, isOnline) ||
+                other.isOnline == isOnline) &&
             (identical(other.photoUrl, photoUrl) ||
                 other.photoUrl == photoUrl) &&
             (identical(other.rating, rating) || other.rating == rating) &&
@@ -329,6 +348,7 @@ class _$_SpecialistModel extends _SpecialistModel with DiagnosticableTreeMixin {
       const DeepCollectionEquality().hash(_specializations),
       about,
       education,
+      isOnline,
       photoUrl,
       rating,
       reviewCount);
@@ -350,6 +370,7 @@ abstract class _SpecialistModel extends SpecialistModel {
       required final List<String> specializations,
       final String? about,
       final String? education,
+      final bool? isOnline,
       final String? photoUrl,
       final double rating,
       final int reviewCount}) = _$_SpecialistModel;
@@ -371,6 +392,8 @@ abstract class _SpecialistModel extends SpecialistModel {
   String? get about;
   @override
   String? get education;
+  @override
+  bool? get isOnline;
   @override
   String? get photoUrl;
   @override

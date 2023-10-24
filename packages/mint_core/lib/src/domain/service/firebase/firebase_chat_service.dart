@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:injectable/injectable.dart';
 import 'package:path/path.dart';
@@ -119,12 +118,7 @@ class FirebaseChatService implements ChatService {
       return _chatRepository.sendMessage(partialMessage, roomId);
     } else if (message is types.PartialAudio) {
       final name = _getFileName(message.metadata, message.name);
-      final fileUrl = await _storageService.uploadChatFile(
-        bytes,
-        name,
-        roomId,
-        contentType: kIsWeb ? 'audio/webm' : null,
-      );
+      final fileUrl = await _storageService.uploadChatFile(bytes, name, roomId);
 
       final partialMessage = types.PartialAudio(
         duration: message.duration,

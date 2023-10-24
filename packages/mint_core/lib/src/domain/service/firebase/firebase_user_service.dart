@@ -36,7 +36,10 @@ class FirebaseUserService implements UserService {
 
   @override
   Future<void> logOut() async {
-    await _userRepository.logOut();
+    await Future.wait([
+      _userRepository.cancelUserPresenceSubscription(),
+      _userRepository.logOut(),
+    ]);
   }
 
   @override
@@ -58,14 +61,21 @@ class FirebaseUserService implements UserService {
             photoData.name,
             userData.id,
           );
+
     if (fileData == null) {
+      /// No photo changes, use only user data.
       await _userRepository.updateUserData(_userModelToDto.create(userData));
       return userData;
     } else {
+      final photoUrl = fileData.photoUrl;
+
       final userDto = _userModelToDto.create(
-        userData.copyWith(photoUrl: fileData.storageUrl ?? fileData.photoUrl),
+        userData.copyWith(photoUrl: fileData.storageUrl ?? photoUrl),
       );
-      await _userRepository.updateUserData(userDto);
+
+      /// For user in 'users' collection, [fileData.storageUrl] is set,
+      /// for user in 'chat_users' collection, [photoUrl] is set.
+      await _userRepository.updateUserData(userDto, photoUrl: photoUrl);
       return userData.copyWith(photoUrl: fileData.photoUrl);
     }
   }
@@ -78,6 +88,6 @@ class FirebaseUserService implements UserService {
   @override
   Future<Stream<UserPresence>> getUserPresence(String userId) async {
     final stream = await _userRepository.getUserPresence(userId);
-    return stream.asyncMap(_userPresenceFromDto.create);
+    return stream.map(_userPresenceFromDto.create);
   }
 }

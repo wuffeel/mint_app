@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
-import 'package:http/http.dart' as http;
 import 'package:injectable/injectable.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path/path.dart';
@@ -18,6 +17,10 @@ import 'file_repository_impl.dart';
 @native
 @LazySingleton(as: FileRepository)
 class FileRepositoryNative extends FileRepositoryImpl {
+  FileRepositoryNative(this._firebaseInitializer);
+
+  final FirebaseInitializer _firebaseInitializer;
+
   @override
   Future<String?> loadFile(
     String fileName,
@@ -31,8 +34,7 @@ class FileRepositoryNative extends FileRepositoryImpl {
     if (fileUri.startsWith('http') && !localExists) {
       try {
         onLoadingCallback?.call();
-        final uri = Uri.parse(fileUri);
-        await _downloadFile(uri, localPath);
+        await _downloadFile(fileUri, localPath);
       } finally {
         onLoadedCallback?.call();
       }
@@ -56,7 +58,7 @@ class FileRepositoryNative extends FileRepositoryImpl {
   /// a unique UUID.
   @override
   Future<({types.PartialFile message, Uint8List bytes})?> pickFile() async {
-    final file = await FilePicker.platform.pickFiles(withData: true);
+    final file = await FilePicker.platform.pickFiles(withReadStream: true);
 
     if (file != null && file.files.isNotEmpty) {
       final uuid = const Uuid().v4();
@@ -69,8 +71,9 @@ class FileRepositoryNative extends FileRepositoryImpl {
         metadata: {'uuid': uuid},
       );
 
-      final bytes = pickFile.bytes;
-      if (bytes == null) return null;
+      final readStream = pickFile.readStream;
+      if (readStream == null) return null;
+      final bytes = await _convertStreamToUint8List(readStream);
       await _writeFileAsBytes('$uuid${extension(pickFile.name)}', bytes);
 
       return (message: message, bytes: bytes);
@@ -118,14 +121,14 @@ class FileRepositoryNative extends FileRepositoryImpl {
     }
   }
 
-  /// Downloads a file from the given [fileUri] and saves it to the [localPath].
-  Future<void> _downloadFile(Uri fileUri, String localPath) async {
-    final client = http.Client();
-    final request = await client.get(fileUri);
-    final bytes = request.bodyBytes;
+  /// Downloads a file from the given [url] and saves it to the [localPath].
+  Future<void> _downloadFile(String url, String localPath) async {
+    final storage = await _firebaseInitializer.storage;
+
+    final httpReference = storage.refFromURL(url);
 
     final file = File(localPath);
-    await file.writeAsBytes(bytes);
+    await httpReference.writeToFile(file);
   }
 
   /// Generates the local file path for a given [fileName].
@@ -143,5 +146,13 @@ class FileRepositoryNative extends FileRepositoryImpl {
     final localPath = await _getLocalFilePath(fileName);
     final localFile = File(localPath);
     await localFile.writeAsBytes(bytes);
+  }
+
+  Future<Uint8List> _convertStreamToUint8List(Stream<List<int>> stream) async {
+    final chunks = <List<int>>[];
+    await for (final chunk in stream) {
+      chunks.add(chunk);
+    }
+    return Uint8List.fromList(chunks.expand((x) => x).toList());
   }
 }

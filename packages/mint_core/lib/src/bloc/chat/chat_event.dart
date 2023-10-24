@@ -4,9 +4,9 @@ part of 'chat_bloc.dart';
 abstract class ChatEvent {}
 
 class ChatFetchRoomRequested extends ChatEvent {
-  ChatFetchRoomRequested(this.specialistId);
+  ChatFetchRoomRequested(this.otherUserId);
 
-  final String specialistId;
+  final String otherUserId;
 }
 
 class ChatInitializeRequested extends ChatEvent {

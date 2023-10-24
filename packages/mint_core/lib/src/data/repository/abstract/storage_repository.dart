@@ -12,9 +12,8 @@ abstract class StorageRepository {
   Future<String> uploadChatFile(
     Uint8List bytes,
     String fileName,
-    String roomId, {
-    String? contentType,
-  });
+    String roomId,
+  );
 
   Future<void> deleteStorageFile(String fileUrl);
 }
